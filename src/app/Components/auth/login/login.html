@@ -1,0 +1,16 @@
+<section>
+    <form fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="center center" #f="ngForm" (ngSubmit)="onSubmit(f)">
+        <mat-form-field>
+            <mat-label>Email</mat-label>
+            <input ngModel name="email" type="email" matInput placeholder="Email" email required>
+            <mat-error>Please enter a valid email.</mat-error>
+        </mat-form-field>
+        <mat-form-field hintLabel="Should be at least 6 characters">
+            <mat-label>Password</mat-label>
+            <input ngModel name="password" type="password" matInput placeholder="Password" required #pwd="ngModel"
+                minlength="6">
+            <mat-hint align="end">{{pwd.value?.length }} / 6</mat-hint>
+        </mat-form-field>
+        <button type="submit" mat-raised-button color="primary" [disabled]="f.invalid">Submit</button>
+    </form>
+</section>
