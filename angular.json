@@ -28,7 +28,10 @@
             ],
             "styles": [
               "src/styles.less"
-            ]
+            ],
+            "optimization": {
+              "fonts": false
+            }
           },
           "configurations": {
             "production": {
