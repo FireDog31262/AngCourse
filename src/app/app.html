@@ -11,15 +11,10 @@
         <main>
             <router-outlet />
         </main>
-        @if (!sidenav.opened) {
-        <button mat-icon-button (click)="sidenav.open()">
-            <mat-icon>menu</mat-icon>
+        <button mat-icon-button (click)="sidenav.opened ? sidenav.close() : sidenav.open()">
+            <mat-icon [@iconAnimation]="sidenav.opened ? 'close' : 'menu'">
+                {{ sidenav.opened ? 'close' : 'menu' }}
+            </mat-icon>
         </button>
-        }
-        @else {
-        <button mat-icon-button (click)="sidenav.close()">
-            <mat-icon>close</mat-icon>
-        </button>
-        }
     </mat-sidenav-content>
 </mat-sidenav-container>
