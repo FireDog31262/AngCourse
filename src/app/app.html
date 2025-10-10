@@ -7,11 +7,8 @@
         </nav>
     </mat-sidenav>
     <mat-sidenav-content>
-        <mat-toolbar color="primary">My ToolBar</mat-toolbar>
-        <main>
-            <router-outlet />
-        </main>
-        @if (!sidenav.opened) {
+        <mat-toolbar color="primary">
+          @if (!sidenav.opened) {
         <button mat-icon-button (click)="sidenav.open()">
             <mat-icon>menu</mat-icon>
         </button>
@@ -20,6 +17,10 @@
         <button mat-icon-button (click)="sidenav.close()">
             <mat-icon>close</mat-icon>
         </button>
-        }
+        }My ToolBar</mat-toolbar>
+        <main>
+            <router-outlet />
+        </main>
+
     </mat-sidenav-content>
 </mat-sidenav-container>
