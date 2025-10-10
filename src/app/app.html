@@ -8,19 +8,21 @@
     </mat-sidenav>
     <mat-sidenav-content>
         <mat-toolbar color="primary">
-          @if (!sidenav.opened) {
-        <button mat-icon-button (click)="sidenav.open()">
-            <mat-icon>menu</mat-icon>
-        </button>
-        }
-        @else {
-        <button mat-icon-button (click)="sidenav.close()">
-            <mat-icon>close</mat-icon>
-        </button>
-        }My ToolBar</mat-toolbar>
+            <span>My ToolBar</span>
+            <span style="flex: 1 1 auto;"></span>
+            @if (!sidenav.opened) {
+            <button mat-icon-button (click)="sidenav.open()">
+                <mat-icon [@iconRotate]="'menu'">menu</mat-icon>
+            </button>
+            }
+            @else {
+            <button mat-icon-button (click)="sidenav.close()">
+                <mat-icon [@iconRotate]="'close'">close</mat-icon>
+            </button>
+            }
+        </mat-toolbar>
         <main>
             <router-outlet />
         </main>
-
     </mat-sidenav-content>
 </mat-sidenav-container>
