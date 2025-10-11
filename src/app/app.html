@@ -15,8 +15,8 @@
             <span style="flex: 1 1 auto;"></span>
             <button mat-icon-button (click)="sidenav.opened ? sidenav.close() : sidenav.open()"
                 style="position: relative;">
-                <mat-icon [@fadeIcon]="closeIconState()"
-                    style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                <mat-icon [@rotateCloseIcon]="closeIconRotateState()"
+                    style="position: absolute; top: 50%; left: 50%;">
                     close
                 </mat-icon>
                 <mat-icon [@fadeIcon]="menuIconState()"
