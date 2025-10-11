@@ -1,32 +1,35 @@
 <mat-sidenav-container>
-    <mat-sidenav #sidenav mode="side" opened
-        (openedStart)="onSidenavOpenStart()"
-        (openedChange)="$event ? onSidenavOpenDone() : onSidenavCloseDone()"
-        (closedStart)="onSidenavCloseStart()">
-        <nav>
-            <a routerLink="/">Home</a>
-            <a routerLink="/users">Users</a>
-            <a routerLink="/servers">Servers</a>
-        </nav>
-    </mat-sidenav>
-    <mat-sidenav-content>
-        <mat-toolbar color="primary">
-            <span>My ToolBar</span>
-            <span style="flex: 1 1 auto;"></span>
-            <button mat-icon-button (click)="sidenav.opened ? sidenav.close() : sidenav.open()"
-                style="position: relative;">
-                <mat-icon [@rotateCloseIcon]="closeIconRotateState()"
-                    style="position: absolute; top: 50%; left: 50%;">
-                    close
-                </mat-icon>
-                <mat-icon [@fadeIcon]="menuIconState()"
-                    style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                    menu
-                </mat-icon>
-            </button>
-        </mat-toolbar>
-        <main>
-            <router-outlet />
-        </main>
-    </mat-sidenav-content>
+  <mat-sidenav #sidenav mode="side" (openedStart)="onSidenavOpenStart()"
+    (openedChange)="$event ? onSidenavOpenDone() : onSidenavCloseDone()" (closedStart)="onSidenavCloseStart()">
+    <nav>
+      <a routerLink="/" class="w-100">Home</a>
+      <a routerLink="/users" class="w-100">Users</a>
+      <a routerLink="/servers" class="w-100">Servers</a>
+    </nav>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <button mat-icon-button (click)="sidenav.opened ? sidenav.close() : sidenav.open()" style="position: relative;">
+        <mat-icon class="icon-close" [@rotateCloseIcon]="closeIconRotateState()"
+          style="position: absolute; top: 50%; left: 50%;">
+          close
+        </mat-icon>
+        <mat-icon class="icon-menu" [@fadeIcon]="menuIconState()"
+          style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+          menu
+        </mat-icon>
+      </button>
+
+      <a routerLink="/">LOGO</a>
+      <span style="flex: 1 1 auto;"></span>
+      <div>
+        <a routerLink="/signup" class="mx-2">Sign Up</a>
+        <a routerLink="/login" class="mx-2">Log In</a>
+        <a routerLink="/training" class="mx-2">Training</a>
+      </div>
+    </mat-toolbar>
+    <main>
+      <router-outlet />
+    </main>
+  </mat-sidenav-content>
 </mat-sidenav-container>

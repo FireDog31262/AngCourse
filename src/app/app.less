@@ -1,0 +1,41 @@
+
+a[routerLink] {
+	color: #fff !important;
+  text-decoration: none;
+}
+
+mat-sidenav {
+	height: 100vh !important;
+  width: 10% !important;
+  padding: 1rem;
+	background: var(--mat-toolbar-container-background, #1976d2) !important;
+	color: #fff;
+  a[routerLink] {
+    color: #fff !important;
+    display: block;
+	  margin-bottom: 0.5rem;
+  }
+}
+mat-sidenav-content {
+	height: 100vh !important;
+}
+
+/* Overlapping toolbar icons: control stacking order and prevent pointer interference */
+.icon-close,
+.icon-menu {
+	pointer-events: none;
+}
+
+.icon-close {
+	z-index: 2;
+}
+
+.icon-menu {
+	z-index: 1;
+}
+
+/* Prevent accidental horizontal overflow */
+mat-sidenav-container {
+	height: 100vh;
+	overflow-x: hidden;
+}
