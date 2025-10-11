@@ -22,39 +22,45 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
       state('visible', style({
         opacity: 1
       })),
+      state('animating', style({
+        opacity: 0.5
+      })),
       state('hidden', style({
         opacity: 0
       })),
-      transition('hidden => visible', animate('0ms')),
-      transition('visible => hidden', animate('0ms'))
+      transition('visible => animating', animate('200ms ease-out')),
+      transition('animating => hidden', animate('200ms ease-out')),
+      transition('hidden => visible', animate('0ms'))
     ])
   ]
 })
 export class App {
   protected readonly title = signal('AngularCourse');
-  protected showMenuIcon = signal(false);
-  protected showCloseIcon = signal(true);
-  private animationTimeout?: number;
+  protected menuIconState = signal<'visible' | 'animating' | 'hidden'>('hidden');
+  protected closeIconState = signal<'visible' | 'animating' | 'hidden'>('visible');
 
-  onSidenavAnimationStart(opened: boolean) {
-    // Clear any pending timeout
-    if (this.animationTimeout) {
-      clearTimeout(this.animationTimeout);
-    }
+  onSidenavOpenStart() {
+    // Hide menu icon immediately when opening starts
+    this.menuIconState.set('hidden');
+    // Start animating close icon from visible to hidden
+    this.closeIconState.set('animating');
+  }
 
-    // Hide both icons initially
-    this.showMenuIcon.set(false);
-    this.showCloseIcon.set(false);
+  onSidenavOpenDone() {
+    // Show close icon when opening animation finishes
+    this.closeIconState.set('visible');
+  }
 
-    // Show the appropriate icon after 50% of animation (200ms out of 400ms default)
-    this.animationTimeout = setTimeout(() => {
-      if (opened) {
-        // Opening: show close icon at 50% progress
-        this.showCloseIcon.set(true);
-      } else {
-        // Closing: show menu icon at 50% progress
-        this.showMenuIcon.set(true);
-      }
-    }, 200) as unknown as number;
+  onSidenavCloseStart() {
+    // Hide close icon immediately when closing starts
+    this.closeIconState.set('animating');
+    // Keep menu icon hidden
+    this.menuIconState.set('hidden');
+  }
+
+  onSidenavCloseDone() {
+    // Show menu icon when closing animation finishes
+    this.closeIconState.set('hidden');
+    this.menuIconState.set('visible');
   }
 }

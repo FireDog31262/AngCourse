@@ -1,7 +1,8 @@
 <mat-sidenav-container>
     <mat-sidenav #sidenav mode="side" opened
-        (openedStart)="onSidenavAnimationStart(true)"
-        (closedStart)="onSidenavAnimationStart(false)">
+        (openedStart)="onSidenavOpenStart()"
+        (openedChange)="$event ? onSidenavOpenDone() : onSidenavCloseDone()"
+        (closedStart)="onSidenavCloseStart()">
         <nav>
             <a routerLink="/">Home</a>
             <a routerLink="/users">Users</a>
@@ -14,11 +15,11 @@
             <span style="flex: 1 1 auto;"></span>
             <button mat-icon-button (click)="sidenav.opened ? sidenav.close() : sidenav.open()"
                 style="position: relative;">
-                <mat-icon [@fadeIcon]="showCloseIcon() ? 'visible' : 'hidden'"
+                <mat-icon [@fadeIcon]="closeIconState()"
                     style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
                     close
                 </mat-icon>
-                <mat-icon [@fadeIcon]="showMenuIcon() ? 'visible' : 'hidden'"
+                <mat-icon [@fadeIcon]="menuIconState()"
                     style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
                     menu
                 </mat-icon>
