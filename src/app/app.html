@@ -1,5 +1,8 @@
 <mat-sidenav-container>
-    <mat-sidenav #sidenav mode="side" opened>
+    <mat-sidenav #sidenav mode="side" opened
+        (openedStart)="onSidenavOpenStart()"
+        (openedChange)="$event ? onSidenavOpenDone() : onSidenavCloseDone()"
+        (closedStart)="onSidenavCloseStart()">
         <nav>
             <a routerLink="/">Home</a>
             <a routerLink="/users">Users</a>
@@ -10,9 +13,15 @@
         <mat-toolbar color="primary">
             <span>My ToolBar</span>
             <span style="flex: 1 1 auto;"></span>
-            <button mat-icon-button (click)="sidenav.opened ? sidenav.close() : sidenav.open()">
-                <mat-icon [@iconRotate]="sidenav.opened ? 'close' : 'menu'">
-                    {{ sidenav.opened ? 'close' : 'menu' }}
+            <button mat-icon-button (click)="sidenav.opened ? sidenav.close() : sidenav.open()"
+                style="position: relative;">
+                <mat-icon [@rotateCloseIcon]="closeIconRotateState()"
+                    style="position: absolute; top: 50%; left: 50%;">
+                    close
+                </mat-icon>
+                <mat-icon [@fadeIcon]="menuIconState()"
+                    style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                    menu
                 </mat-icon>
             </button>
         </mat-toolbar>
