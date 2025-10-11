@@ -40,26 +40,25 @@ export class App {
   protected closeIconState = signal<'visible' | 'animating' | 'hidden'>('visible');
 
   onSidenavOpenStart() {
-    // Hide menu icon immediately when opening starts
+    // Open animation starts: menu icon opacity = 0, close icon opacity = 1
     this.menuIconState.set('hidden');
-    // Start animating close icon from visible to hidden
-    this.closeIconState.set('animating');
+    this.closeIconState.set('visible');
   }
 
   onSidenavOpenDone() {
-    // Show close icon when opening animation finishes
+    // Opening done: keep close icon visible
     this.closeIconState.set('visible');
   }
 
   onSidenavCloseStart() {
-    // Hide close icon immediately when closing starts
+    // Close animation starts: close icon opacity goes to 0
     this.closeIconState.set('animating');
-    // Keep menu icon hidden
+    // Menu icon stays hidden during closing
     this.menuIconState.set('hidden');
   }
 
   onSidenavCloseDone() {
-    // Show menu icon when closing animation finishes
+    // Close animation ends: menu icon opacity = 1, close icon opacity = 0
     this.closeIconState.set('hidden');
     this.menuIconState.set('visible');
   }
