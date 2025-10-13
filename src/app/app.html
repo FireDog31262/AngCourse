@@ -1,31 +1,48 @@
 <mat-sidenav-container>
   <mat-sidenav #sidenav mode="side" (openedStart)="onSidenavOpenStart()"
     (openedChange)="$event ? onSidenavOpenDone() : onSidenavCloseDone()" (closedStart)="onSidenavCloseStart()">
-    <nav>
-      <a routerLink="/" class="w-100">Home</a>
-      <a routerLink="/users" class="w-100">Users</a>
-      <a routerLink="/servers" class="w-100">Servers</a>
-    </nav>
+    <mat-nav-list>
+      <a mat-list-item routerLink="/signup" (click)="sidenav.close()">
+        <mat-icon>face</mat-icon>
+        Sign Up
+      </a>
+      <a mat-list-item routerLink="/login" (click)="sidenav.close()">
+        <mat-icon>input</mat-icon>
+        Log In
+      </a>
+      <a mat-list-item routerLink="/training" (click)="sidenav.close()">
+        <mat-icon>fitness_center</mat-icon>
+        Training
+      </a>
+    </mat-nav-list>
+    <mat-nav-list class="nav-caption" fxShow.lt-sm>
+      <button mat-button (click)="sidenav.close()" style="width: 100%;">
+        <mat-icon>eject</mat-icon>
+        Log Out
+      </button>
+    </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
     <mat-toolbar color="primary">
-      <button mat-icon-button (click)="sidenav.opened ? sidenav.close() : sidenav.open()" style="position: relative;">
-        <mat-icon class="icon-close" [@rotateCloseIcon]="closeIconRotateState()"
-          style="position: absolute; top: 50%; left: 50%;">
-          close
-        </mat-icon>
-        <mat-icon class="icon-menu" [@fadeIcon]="menuIconState()"
-          style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-          menu
-        </mat-icon>
-      </button>
-
+      <div fxHide.gt-xs>
+        <button mat-icon-button (click)="sidenav.opened ? sidenav.close() : sidenav.open()" style="position: relative;">
+          <mat-icon class="icon-close" [@rotateCloseIcon]="closeIconRotateState()"
+            style="position: absolute; top: 50%; left: 50%;">
+            close
+          </mat-icon>
+          <mat-icon class="icon-menu" [@fadeIcon]="menuIconState()"
+            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+            menu
+          </mat-icon>
+        </button>
+      </div>
       <a routerLink="/">LOGO</a>
       <span style="flex: 1 1 auto;"></span>
-      <div>
+      <div fxHide.sm>
         <a routerLink="/signup" class="mx-2">Sign Up</a>
         <a routerLink="/login" class="mx-2">Log In</a>
         <a routerLink="/training" class="mx-2">Training</a>
+        <a class="mx-2">Log Out</a>
       </div>
     </mat-toolbar>
     <main>
