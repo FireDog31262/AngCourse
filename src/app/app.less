@@ -5,8 +5,11 @@ a[routerLink] {
 }
 
 mat-sidenav {
+  position: absolute;
+  top: 0;
+  left: 0;
 	height: 100vh !important;
-  width: 10% !important;
+  width: 50% !important;
   padding: 1rem;
 	background: var(--mat-toolbar-container-background, #1976d2) !important;
 	color: #fff;
@@ -35,7 +38,7 @@ mat-sidenav-content {
 }
 
 /* Prevent accidental horizontal overflow */
-mat-sidenav-container {
-	height: 100vh;
-	overflow-x: hidden;
-}
+// mat-sidenav-container {
+// 	height: 100vh;
+// 	overflow-x: hidden;
+// }
