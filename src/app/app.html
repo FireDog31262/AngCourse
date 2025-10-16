@@ -24,6 +24,14 @@
   </mat-sidenav>
   <mat-sidenav-content>
     <mat-toolbar color="primary">
+      <a routerLink="/">LOGO</a>
+      <span style="flex: 1 1 auto;"></span>
+      <div fxHide.lt-sm>
+        <a routerLink="/signup" class="mx-2">Sign Up</a>
+        <a routerLink="/login" class="mx-2">Log In</a>
+        <a routerLink="/training" class="mx-2">Training</a>
+        <a class="mx-2">Log Out</a>
+      </div>
       <div fxHide.gt-xs>
         <button mat-icon-button (click)="sidenav.opened ? sidenav.close() : sidenav.open()" style="position: relative;">
           <mat-icon class="icon-close" [@rotateCloseIcon]="closeIconRotateState()"
@@ -35,14 +43,6 @@
             menu
           </mat-icon>
         </button>
-      </div>
-      <a routerLink="/">LOGO</a>
-      <span style="flex: 1 1 auto;"></span>
-      <div fxHide.sm>
-        <a routerLink="/signup" class="mx-2">Sign Up</a>
-        <a routerLink="/login" class="mx-2">Log In</a>
-        <a routerLink="/training" class="mx-2">Training</a>
-        <a class="mx-2">Log Out</a>
       </div>
     </mat-toolbar>
     <main>
