@@ -5,22 +5,20 @@ a[routerLink] {
 }
 
 mat-sidenav {
-  position: absolute;
-  top: 0;
-  left: 0;
-	height: 100vh !important;
   width: 50% !important;
-  padding: 1rem;
-	background: var(--mat-toolbar-container-background, #1976d2) !important;
-	color: #fff;
-  a[routerLink] {
-    color: #fff !important;
-    display: block;
-	  margin-bottom: 0.5rem;
-  }
+  background-color: #1976d2 !important;
+  color: #fff !important;
 }
+
 mat-sidenav-content {
 	height: 100vh !important;
+  width: 100% !important;
+  position: relative !important;
+}
+
+mat-sidenav-container {
+  width: 100% !important;
+  position: relative !important;
 }
 
 /* Overlapping toolbar icons: control stacking order and prevent pointer interference */

@@ -1,3 +1,4 @@
+import { Header } from './navigation/header/header';
 import { Component, OnDestroy, signal } from '@angular/core';
 import { RouterOutlet, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,6 +14,7 @@ import {
   animate
 } from '@angular/animations';
 import { ExtendedModule } from "@angular/flex-layout";
+import { SideNavList } from './navigation/side-nav-list/side-nav-list';
 
 @Component({
   selector: 'app-root',
@@ -24,7 +26,8 @@ import { ExtendedModule } from "@angular/flex-layout";
     MatSidenavModule,
     MatToolbarModule,
     MatListModule,
-    ExtendedModule
+    ExtendedModule,
+    SideNavList
 ],
   templateUrl: './app.html',
   styleUrls: ['./app.less'],
@@ -102,6 +105,11 @@ export class App implements OnDestroy {
   onSidenavCloseDone() {
     // Close animation ends: show menu icon
     this.menuIconState.set('visible');
+  }
+
+  logout() {
+    // Implement logout logic here
+    console.log('User logged out');
   }
 
   ngOnDestroy(): void {
