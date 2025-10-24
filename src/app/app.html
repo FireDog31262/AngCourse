@@ -1,10 +1,10 @@
 <mat-sidenav-container [hasBackdrop]="false">
-  <mat-sidenav color="primary" #sidenav mode="over" (openedStart)="onSidenavOpenStart()"
-    (openedChange)="$event ? onSidenavOpenDone() : onSidenavCloseDone()" (closedStart)="onSidenavCloseStart()">
+  <mat-sidenav color="primary" #sidenav mode="over">
     <app-side-nav-list [sidenav]="sidenav"></app-side-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
-    <mat-toolbar color="primary">
+    <app-header [sidenav]="sidenav"></app-header>
+    <!-- <mat-toolbar color="primary">
       <div fxHide.lt-sm>
         <a routerLink="/">LOGO</a>
       </div>
@@ -28,7 +28,7 @@
           </mat-icon>
         </button>
       </div>
-    </mat-toolbar>
+    </mat-toolbar> -->
     <main>
       <router-outlet />
     </main>
