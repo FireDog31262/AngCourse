@@ -4,31 +4,6 @@
   </mat-sidenav>
   <mat-sidenav-content>
     <app-header [sidenav]="sidenav"></app-header>
-    <!-- <mat-toolbar color="primary">
-      <div fxHide.lt-sm>
-        <a routerLink="/">LOGO</a>
-      </div>
-      <span style="flex: 1 1 auto;"></span>
-      <div fxHide.lt-sm>
-        <a routerLink="/signup" class="mx-2">Sign Up</a>
-        <a routerLink="/login" class="mx-2">Log In</a>
-        <a routerLink="/training" class="mx-2">Training</a>
-        <a routerLink="/logout" class="mx-2">Log Out</a>
-      </div>
-      <div fxHide.gt-xs style="margin-left: auto;">
-        <a routerLink="/">LOGO</a>
-        <button mat-icon-button (click)="sidenav.opened ? sidenav.close() : sidenav.open()" style="position: relative;">
-          <mat-icon class="icon-close" [@rotateCloseIcon]="closeIconRotateState()"
-            style="position: absolute; top: 50%; left: 50%;">
-            close
-          </mat-icon>
-          <mat-icon class="icon-menu" [@fadeIcon]="menuIconState()"
-            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-            menu
-          </mat-icon>
-        </button>
-      </div>
-    </mat-toolbar> -->
     <main>
       <router-outlet />
     </main>

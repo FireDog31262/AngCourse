@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
+import { FlexLayoutModule } from "@angular/flex-layout";
 
 @Component({
   selector: 'app-welcome',
-  imports: [],
+  imports: [FlexLayoutModule],
   templateUrl: './welcome.html',
-  styleUrl: './welcome.sass'
+  styleUrl: './welcome.less'
 })
 export class Welcome {
 
