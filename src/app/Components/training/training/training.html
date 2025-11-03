@@ -1,11 +1,15 @@
+@if (!ongoingTraining()){
 <mat-tab-group>
   <mat-tab label="New Training">
-    <app-new-training />
+    <app-new-training (trainingStart)="ongoingTraining.set(true)" />
   </mat-tab>
-  <mat-tab label="Current Training">
-    <app-current-training />
-  </mat-tab>
+  <!-- <mat-tab label="Current Training">
+      <app-current-training />
+    </mat-tab> -->
   <mat-tab label="Past Training">
     <app-past-training />
   </mat-tab>
 </mat-tab-group>
+} @else {
+<app-current-training (exitTraining)="ongoingTraining.set(false)" />
+}
