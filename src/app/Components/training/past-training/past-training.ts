@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './past-training.html',
-  styleUrl: './past-training.sass'
+  styleUrl: './past-training.less'
 })
 export class PastTraining {
 

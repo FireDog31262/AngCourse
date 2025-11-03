@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, NgForm } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-login',
@@ -16,10 +17,16 @@ import { MatInputModule } from '@angular/material/input';
     FormsModule
   ],
   templateUrl: './login.html',
-  styleUrl: './login.sass'
+  styleUrls: ['./login.less']
 })
 export class Login {
+
+  authService = inject(AuthService);
+
   onSubmit(form: NgForm) {
-    console.log(form.value);
+    this.authService.login({
+      email: form.value.email,
+      password: form.value.password
+    });
   }
 }

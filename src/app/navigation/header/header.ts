@@ -1,9 +1,10 @@
+import { AuthService } from './../../Components/auth/auth.service';
 import { MatIconModule } from '@angular/material/icon';
-import { Component, OnDestroy, OnInit, input, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, input, signal } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ExtendedModule } from '@angular/flex-layout';
 import {
   animate,
@@ -54,6 +55,8 @@ import { Subscription } from 'rxjs';
 })
 export class Header implements OnInit, OnDestroy {
   sidenav = input.required<MatSidenav>();
+  authService = inject(AuthService);
+  loggedIn = signal<boolean>(false);
 
   protected menuIconState = signal<'visible' | 'hidden'>('visible');
   protected closeIconRotateState = signal<'closed' | 'open'>('closed');
@@ -64,8 +67,7 @@ export class Header implements OnInit, OnDestroy {
   private subs = new Subscription();
 
   ngOnInit(): void {
-    const s = this.sidenav();
-    // Wire to sidenav lifecycle to coordinate animations
+    const s = this.sidenav();    // Wire to sidenav lifecycle to coordinate animations
     this.subs.add(s.openedStart.subscribe(() => this.onSidenavOpenStart()));
     this.subs.add(
       s.openedChange.subscribe((opened) =>
@@ -73,6 +75,9 @@ export class Header implements OnInit, OnDestroy {
       )
     );
     this.subs.add(s.closedStart.subscribe(() => this.onSidenavCloseStart()));
+    this.subs.add(this.authService.loggedIn.subscribe((isLoggedIn) => {
+      this.loggedIn.set(isLoggedIn);
+    }));
   }
 
   ngOnDestroy(): void {
@@ -119,5 +124,9 @@ export class Header implements OnInit, OnDestroy {
   private onSidenavCloseDone() {
     // Close animation ends: show menu icon
     this.menuIconState.set('visible');
+  }
+
+  logOut() {
+    this.authService.logout();
   }
 }

@@ -1,4 +1,14 @@
 <mat-nav-list>
+  @if(loggedin()) {
+  <a mat-list-item routerLink="/training" (click)="sidenav().close()">
+    <mat-icon>fitness_center</mat-icon>
+    Training
+  </a>
+  <a mat-list-item routerLink="/" (click)="logout()">
+    <mat-icon>eject</mat-icon>
+    Log Out
+  </a>
+  } @else {
   <a mat-list-item routerLink="/signup" (click)="sidenav().close()">
     <mat-icon>face</mat-icon>
     Sign Up
@@ -7,12 +17,5 @@
     <mat-icon>input</mat-icon>
     Log In
   </a>
-  <a mat-list-item routerLink="/training" (click)="sidenav().close()">
-    <mat-icon>fitness_center</mat-icon>
-    Training
-  </a>
-  <a mat-list-item routerLink="/" (click)="sidenav().close()">
-    <mat-icon>eject</mat-icon>
-    Log Out
-  </a>
+  }
 </mat-nav-list>
