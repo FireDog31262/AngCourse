@@ -4,10 +4,10 @@
     <mat-icon>fitness_center</mat-icon>
     Training
   </a>
-  <a mat-list-item routerLink="/" (click)="logout()">
+  <button mat-list-item (click)="logout()">
     <mat-icon>eject</mat-icon>
     Log Out
-  </a>
+  </button>
   } @else {
   <a mat-list-item routerLink="/signup" (click)="sidenav().close()">
     <mat-icon>face</mat-icon>

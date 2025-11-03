@@ -1,26 +1,33 @@
-import { inject, signal } from "@angular/core";
+import { inject, Injectable, signal } from "@angular/core";
 import { AuthData } from "./auth-data.model";
 import { User } from "./user.model";
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, Subject } from "rxjs";
 import { Router } from "@angular/router";
 
+@Injectable({ providedIn: 'root' })
 export class AuthService {
   private user = signal<User | null>(null);
-  loggedIn = new BehaviorSubject<boolean>(false);
+  loggedIn = new Subject<boolean>();
 
   router = inject(Router);
 
   login(authData: AuthData) {
     // Simulate login
+    console.log('🔐 AuthService.login() called');
     this.user.set({ id: '1', email: authData.email, name: 'John Doe' });
+    console.log('✅ User set:', this.user());
     this.loggedIn.next(true);
-    this.router.navigate(['/training']);
+    console.log('📡 loggedIn.next(true) called');
+    console.log('🧭 Navigating to /training...');
+    this.router.navigate(['/training']).then(success => {
+      console.log('🧭 Navigation result:', success);
+    });
   }
 
   logout() {
     this.user.set(null);
     this.loggedIn.next(false);
-    this.router.navigate(['/login']);
+    this.router.navigate(['/']);
   }
 
   getUser() {
@@ -35,6 +42,7 @@ export class AuthService {
   }
 
   isAuthenticated() {
-    return this.user() !== null;
+    const authenticated = this.user() !== null;
+    return authenticated;
   }
 }
