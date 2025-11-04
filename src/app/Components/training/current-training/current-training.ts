@@ -4,6 +4,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog } from '@angular/material/dialog';
 import { StopTrainingDialog } from './stop-training-dialog/stop-training-dialog';
 import { MatButtonModule } from "@angular/material/button";
+import { TrainingService } from '../training.service';
 
 @Component({
   selector: 'app-current-training',
@@ -19,6 +20,7 @@ export class CurrentTraining implements OnInit, OnDestroy {
  timer: number | undefined;
  readonly dialog = inject(MatDialog);
  exitTraining = output<void>();
+ trainingService = inject(TrainingService);
 
   ngOnInit() {
     this.startTimer();
@@ -29,9 +31,7 @@ export class CurrentTraining implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(StopTrainingDialog, { data: { progress: this.progress() } });
     dialogRef.afterClosed().subscribe((confirmed: boolean) => {
       if (confirmed) {
-        this.ongoingTraining.set(false);
-        this.progress.set(0);
-        this.exitTraining.emit();
+        this.trainingService.cancelExercise(this.progress());
       } else {
         this.startTimer();
       }
@@ -44,12 +44,19 @@ export class CurrentTraining implements OnInit, OnDestroy {
 
   private startTimer() {
     this.stopTimer();
+    const exercise = this.trainingService.getRunningExercise();
+    if (!exercise || typeof exercise.duration !== 'number') {
+      // no running exercise available - do not start the timer
+      return;
+    }
+    const step = (exercise.duration / 100) * 1000;
     this.timer = window.setInterval(() => {
       this.progress.set(this.progress() + 5);
       if (this.progress() >= 100) {
         this.stopTimer();
+        this.trainingService.completeExercise();
       }
-    }, 1000);
+    }, step);
   }
 
   private stopTimer() {
