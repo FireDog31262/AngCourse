@@ -14,7 +14,8 @@ export class AuthService {
   login(authData: AuthData) {
     // Simulate login
     console.log('🔐 AuthService.login() called');
-    this.user.set({ id: '1', email: authData.email, name: 'John Doe' });
+    // const user =
+    // this.user.set({ id: '1', email: authData.email, name: 'John Doe' });
     console.log('✅ User set:', this.user());
     this.loggedIn.next(true);
     console.log('📡 loggedIn.next(true) called');
@@ -34,9 +35,9 @@ export class AuthService {
     return { ...this.user() };
   }
 
-  registerUser(authData: AuthData) {
+  registerUser(user: User) {
     // Simulate user registration
-    this.user.set({ id: '2', email: authData.email, name: 'Jane Doe' });
+    this.user.set({ ...user });
     this.loggedIn.next(true);
     this.router.navigate(['/training']);
   }

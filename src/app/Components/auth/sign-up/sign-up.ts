@@ -37,8 +37,7 @@ export class SignUp {
   }
   onSubmit(form: NgForm) {
     this.authService.registerUser({
-      email: form.value.email,
-      password: form.value.password
+    ...form.value
     });
   }
 }
