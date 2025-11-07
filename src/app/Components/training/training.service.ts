@@ -1,19 +1,42 @@
-import { Injectable } from "@angular/core";
+import { Firestore, collection, getDocs } from '@angular/fire/firestore';
+import { inject, Injectable } from "@angular/core";
 import { Exercise } from "./excercise.model";
 import { Subject } from "rxjs";
 
 @Injectable({ providedIn: 'root' })
 export class TrainingService {
   exerciseChanged = new Subject<Exercise | null>();
-  private availableExercises: Exercise[] = [
-    { id: 'crunches', name: 'Crunches', duration: 30, calories: 8 },
-    { id: 'touch-toes', name: 'Touch Toes', duration: 180, calories: 15 },
-    { id: 'side-lunges', name: 'Side Lunges', duration: 120, calories: 18 },
-    { id: 'burpees', name: 'Burpees', duration: 60, calories: 8 }
-  ];
+  exercisesChanged = new Subject<Exercise[]>();
 
+  private availableExercises: Exercise[] = [];
   private runningExercise: Exercise | null = null;
   private exercises: Exercise[] = [];
+
+  private firestore = inject(Firestore);
+
+  // Fetch available exercises from Firestore
+  async fetchAvailableExercises(): Promise<void> {
+    try {
+      const exercisesCollection = collection(this.firestore, 'availableExcercises');
+       console.log('🔍 Fetching from collection: availableExcercises');
+
+      const querySnapshot = await getDocs(exercisesCollection);
+       console.log('📦 Documents found:', querySnapshot.size);
+
+       this.availableExercises = querySnapshot.docs.map(doc => {
+         console.log('📄 Doc ID:', doc.id, 'Data:', doc.data());
+         return {
+           id: doc.id,
+           ...doc.data()
+         };
+       }) as Exercise[];
+
+       console.log('✅ Available exercises:', this.availableExercises);
+      this.exercisesChanged.next([...this.availableExercises]);
+    } catch (error) {
+       console.error('❌ Error fetching exercises:', error);
+    }
+  }
 
   getAvailableExercises(): Exercise[] {
     return this.availableExercises.slice();
@@ -39,7 +62,7 @@ export class TrainingService {
   completeExercise() {
     this.exercises.push({
        ...this.runningExercise!,
-       duration: this.runningExercise!.duration,
+       Duration: this.runningExercise!.Duration,
        calories: this.runningExercise!.calories,
        date: new Date(),
        state: 'completed'
@@ -51,7 +74,7 @@ export class TrainingService {
   cancelExercise(progress: number) {
     this.exercises.push({
       ...this.runningExercise!,
-      duration: this.runningExercise!.duration * (progress / 100),
+      Duration: this.runningExercise!.Duration * (progress / 100),
       calories: this.runningExercise!.calories * (progress / 100),
       date: new Date(),
       state: 'cancelled'

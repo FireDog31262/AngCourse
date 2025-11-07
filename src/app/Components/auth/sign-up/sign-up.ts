@@ -33,7 +33,7 @@ export class SignUp {
   authService = inject(AuthService);
 
   constructor() {
-    this.minDate.setFullYear(this.maxDate.getFullYear() - 18);
+    this.maxDate.setFullYear(this.maxDate.getFullYear() - 18);
   }
   onSubmit(form: NgForm) {
     this.authService.registerUser({

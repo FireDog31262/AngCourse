@@ -45,11 +45,11 @@ export class CurrentTraining implements OnInit, OnDestroy {
   private startTimer() {
     this.stopTimer();
     const exercise = this.trainingService.getRunningExercise();
-    if (!exercise || typeof exercise.duration !== 'number') {
+    if (!exercise || typeof exercise.Duration !== 'number') {
       // no running exercise available - do not start the timer
       return;
     }
-    const step = (exercise.duration / 100) * 1000;
+    const step = (exercise.Duration / 100) * 1000;
     this.timer = window.setInterval(() => {
       this.progress.set(this.progress() + 5);
       if (this.progress() >= 100) {

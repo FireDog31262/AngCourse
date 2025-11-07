@@ -1,23 +1,28 @@
 <section>
-    <form fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="center center" #f="ngForm" (ngSubmit)="onSubmit(f)">
-        <mat-form-field>
-            <mat-label>Email</mat-label>
-            <input ngModel name="email" type="email" matInput placeholder="Email" email required>
-            <mat-error>Please enter a valid email.</mat-error>
-        </mat-form-field>
-        <mat-form-field hintLabel="Should be at least 6 characters">
-            <mat-label>Password</mat-label>
-            <input ngModel name="password" type="password" matInput placeholder="Password" required #pwd="ngModel"
-                minlength="6">
-            <mat-hint align="end">{{pwd.value?.length }} / 6</mat-hint>
-        </mat-form-field>
-        <mat-form-field>
-            <input [max]="maxDate" [min]="minDate" matInput [matDatepicker]="picker" placeholder="Your Birthday" ngModel
-                name="birthday" required>
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
-        </mat-form-field>
-        <mat-checkbox ngModel name="terms" required labelPosition="before">Agree to terms and conditions</mat-checkbox>
-        <button type="submit" mat-raised-button color="primary" [disabled]="f.invalid">Submit</button>
-    </form>
+  <form fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="center center" #f="ngForm" (ngSubmit)="onSubmit(f)">
+    <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input ngModel name="name" type="text" matInput placeholder="Name" required>
+      <mat-error>Please enter a valid name.</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Email</mat-label>
+      <input ngModel name="email" type="email" matInput placeholder="Email" email required>
+      <mat-error>Please enter a valid email.</mat-error>
+    </mat-form-field>
+    <mat-form-field hintLabel="Should be at least 6 characters">
+      <mat-label>Password</mat-label>
+      <input ngModel name="password" type="password" matInput placeholder="Password" required #pwd="ngModel"
+        minlength="6">
+      <mat-hint align="end">{{pwd.value?.length }} / 6</mat-hint>
+    </mat-form-field>
+    <mat-form-field>
+      <input [max]="maxDate" matInput [matDatepicker]="picker" placeholder="Your Birthday" ngModel name="birthday"
+        required>
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+    <mat-checkbox ngModel name="terms" required labelPosition="before">Agree to terms and conditions</mat-checkbox>
+    <button type="submit" mat-raised-button color="primary" [disabled]="f.invalid">Submit</button>
+  </form>
 </section>

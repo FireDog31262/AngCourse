@@ -8,8 +8,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
 import { ExtendedModule } from "@angular/flex-layout";
 import { SideNavList } from './navigation/side-nav-list/side-nav-list';
-import { AuthService } from './Components/auth/auth.service';
-import { AuthGuard } from './Components/auth/auth.guard';
 
 @Component({
   selector: 'app-root',
@@ -28,7 +26,7 @@ import { AuthGuard } from './Components/auth/auth.guard';
 ],
   templateUrl: './app.html',
   styleUrls: ['./app.less'],
-  animations: [],
-  // providers: [AuthService, AuthGuard]
+  animations: []
 })
-export class App {}
+export class App {
+}
