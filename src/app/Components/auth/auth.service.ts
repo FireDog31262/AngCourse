@@ -89,7 +89,7 @@ export class AuthService {
     return { ...this.user() };
   }
 
-async registerUser(userData: User & { password: string }) {
+  async registerUser(userData: User & { password: string }) {
     try {
       // Step 1: Register user with Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(this.auth, userData.email, userData.password);

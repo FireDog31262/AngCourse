@@ -13,13 +13,13 @@
           <mat-header-cell *matHeaderCellDef mat-sort-header> Date </mat-header-cell>
           <mat-cell *matCellDef="let exercise"> {{exercise.date | date}} </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="name">
+        <ng-container matColumnDef="Name">
           <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
-          <mat-cell *matCellDef="let exercise"> {{exercise.name}} </mat-cell>
+          <mat-cell *matCellDef="let exercise"> {{exercise.Name}} </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="duration">
+        <ng-container matColumnDef="Duration">
           <mat-header-cell *matHeaderCellDef mat-sort-header> Duration </mat-header-cell>
-          <mat-cell *matCellDef="let exercise"> {{exercise.duration}} </mat-cell>
+          <mat-cell *matCellDef="let exercise"> {{exercise.Duration}} </mat-cell>
         </ng-container>
         <ng-container matColumnDef="calories">
           <mat-header-cell *matHeaderCellDef mat-sort-header> Calories </mat-header-cell>
@@ -29,8 +29,8 @@
           <mat-header-cell *matHeaderCellDef mat-sort-header> State </mat-header-cell>
           <mat-cell *matCellDef="let exercise"> {{exercise.state}} </mat-cell>
         </ng-container>
-        <mat-header-row *matHeaderRowDef="['date', 'name', 'duration', 'calories', 'state']"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: ['date', 'name', 'duration', 'calories', 'state'];"></mat-row>
+        <mat-header-row *matHeaderRowDef="['date', 'Name', 'Duration', 'calories', 'state']"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: ['date', 'Name', 'Duration', 'calories', 'state'];"></mat-row>
       </mat-table>
       <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
     </mat-card-content>

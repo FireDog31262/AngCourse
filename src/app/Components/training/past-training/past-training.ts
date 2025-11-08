@@ -30,13 +30,19 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 })
 export class PastTraining implements OnInit {
   trainingService = inject(TrainingService);
-  exercises: MatTableDataSource<Exercise> = new MatTableDataSource(this.trainingService.getExercises());
+  exercises = new MatTableDataSource<Exercise>(); // = new MatTableDataSource(this.trainingService.getExercises());
   sort = viewChild.required<MatSort>(MatSort);
   paginator = viewChild.required<MatPaginator>(MatPaginator);
   filterInput = viewChild.required<ElementRef<HTMLInputElement>>('filterInput');
   filterValue = '';
 
   ngOnInit() {
+    // Subscribe to finished exercises updates
+    this.trainingService.finishedExercisesChanged.subscribe(list => {
+      this.exercises.data = list;
+    });
+    // Initial fetch
+    this.trainingService.fetchFinishedExercises();
     this.exercises.sort = this.sort();
     this.exercises.paginator = this.paginator();
   }

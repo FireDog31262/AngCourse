@@ -1,4 +1,4 @@
-import { Firestore, collection, getDocs } from '@angular/fire/firestore';
+import { Firestore, collection, getDocs, addDoc } from '@angular/fire/firestore';
 import { inject, Injectable } from "@angular/core";
 import { Exercise } from "./excercise.model";
 import { Subject } from "rxjs";
@@ -7,6 +7,7 @@ import { Subject } from "rxjs";
 export class TrainingService {
   exerciseChanged = new Subject<Exercise | null>();
   exercisesChanged = new Subject<Exercise[]>();
+  finishedExercisesChanged = new Subject<Exercise[]>();
 
   private availableExercises: Exercise[] = [];
   private runningExercise: Exercise | null = null;
@@ -25,14 +26,14 @@ export class TrainingService {
 
        this.availableExercises = querySnapshot.docs.map(doc => {
          console.log('📄 Doc ID:', doc.id, 'Data:', doc.data());
-         return {
+        return {
            id: doc.id,
            ...doc.data()
          };
        }) as Exercise[];
 
        console.log('✅ Available exercises:', this.availableExercises);
-      this.exercisesChanged.next([...this.availableExercises]);
+      this.exercisesChanged.next(this.availableExercises);
     } catch (error) {
        console.error('❌ Error fetching exercises:', error);
     }
@@ -46,8 +47,8 @@ export class TrainingService {
     return this.exercises.slice();
   }
 
-  startExercise(selectedId: string) {
-    this.runningExercise = this.availableExercises.find(ex => ex.id === selectedId) || null;
+  startExercise(exerciseId: string) {
+    this.runningExercise = this.availableExercises.find(ex => ex.id === exerciseId) || null;
     if (this.runningExercise) {
       this.exerciseChanged.next({ ...this.runningExercise });
     } else {
@@ -60,26 +61,51 @@ export class TrainingService {
   }
 
   completeExercise() {
-    this.exercises.push({
-       ...this.runningExercise!,
-       Duration: this.runningExercise!.Duration,
-       calories: this.runningExercise!.calories,
-       date: new Date(),
-       state: 'completed'
+    if (!this.runningExercise) return;
+    this.addDataToDatabase({
+      ...this.runningExercise,
+      Duration: this.runningExercise.Duration,
+      calories: this.runningExercise.calories,
+      date: new Date(),
+      state: 'completed'
     });
     this.runningExercise = null;
     this.exerciseChanged.next(null);
   }
 
   cancelExercise(progress: number) {
-    this.exercises.push({
-      ...this.runningExercise!,
-      Duration: this.runningExercise!.Duration * (progress / 100),
-      calories: this.runningExercise!.calories * (progress / 100),
+    if (!this.runningExercise) return;
+    this.addDataToDatabase({
+      ...this.runningExercise,
+      Duration: this.runningExercise.Duration * (progress / 100),
+      calories: this.runningExercise.calories * (progress / 100),
       date: new Date(),
       state: 'cancelled'
     });
     this.runningExercise = null;
     this.exerciseChanged.next(null);
+  }
+
+  private async addDataToDatabase(exercise: Exercise) {
+    try {
+      const finishedExercisesCollection = collection(this.firestore, 'finishedExercises');
+      await addDoc(finishedExercisesCollection, exercise);
+      console.log('✅ Exercise added to finishedExercises');
+      // Refresh local cache after adding
+      await this.fetchFinishedExercises();
+    } catch (error) {
+      console.error('❌ Error adding exercise to database:', error);
+    }
+  }
+
+  async fetchFinishedExercises(): Promise<void> {
+    try {
+      const finishedCollection = collection(this.firestore, 'finishedExercises');
+      const snapshot = await getDocs(finishedCollection);
+      const data = snapshot.docs.map(d => d.data()) as Exercise[];
+      this.finishedExercisesChanged.next(data);
+    } catch (error) {
+      console.error('❌ Error fetching finished exercises:', error);
+    }
   }
 }

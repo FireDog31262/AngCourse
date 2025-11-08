@@ -33,12 +33,10 @@ export class NewTraining implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.trainingService.fetchAvailableExercises();
     this.subscription = this.trainingService.exercisesChanged.subscribe(exercises => {
-      console.log('Exercises received in NewTraining:', exercises);
       this.availableExcercises.set(exercises);
-      console.log('Available exercises set to:', this.availableExcercises());
     });
+    this.trainingService.fetchAvailableExercises();
   }
 
   ngOnDestroy(): void {
