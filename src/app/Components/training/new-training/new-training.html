@@ -20,8 +20,7 @@
       </mat-form-field>
     </mat-card-content>
     <mat-card-actions fxLayoutAlign="center">
-      <button mat-button type="submit" [disabled]="!SelectedExercise"
-        (click)="startExercise(SelectedExercise.value)">Start
+      <button mat-button type="submit" [disabled]="selected.invalid" (click)="onStartTraining()">Start
         Workout</button>
     </mat-card-actions>
   </mat-card>

@@ -102,7 +102,22 @@ export class TrainingService {
     try {
       const finishedCollection = collection(this.firestore, 'finishedExercises');
       const snapshot = await getDocs(finishedCollection);
-      const data = snapshot.docs.map(d => d.data()) as Exercise[];
+      const data: Exercise[] = snapshot.docs.map(doc => {
+        const payload: any = doc.data();
+        return {
+          id: doc.id ?? payload?.id ?? '',
+          Name: payload?.name ?? payload?.Name ?? '',
+          Duration: payload?.duration ?? payload?.Duration ?? 0,
+          calories: payload?.calories ?? 0,
+          date: payload?.date
+            ? (typeof payload.date === 'string'
+                ? new Date(payload.date)
+                : payload.date.toDate?.() ?? new Date(payload.date))
+            : undefined,
+          state: payload?.state ?? null
+        } as Exercise;
+      });
+
       this.finishedExercisesChanged.next(data);
     } catch (error) {
       console.error('❌ Error fetching finished exercises:', error);

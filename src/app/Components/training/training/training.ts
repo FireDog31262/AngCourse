@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import { NewTraining } from "../new-training/new-training";
 import { CurrentTraining } from "../current-training/current-training";
@@ -13,14 +13,18 @@ import { TrainingService } from '../training.service';
   templateUrl: './training.html',
   styleUrl: './training.less'
 })
-export class Training {
+export class Training implements OnInit, OnDestroy {
   ongoingTraining = signal(false);
   trainingService = inject(TrainingService);
-  sub!: Subscription;
+  private sub?: Subscription;
 
-  constructor() {
+  ngOnInit(): void {
     this.sub = this.trainingService.exerciseChanged.subscribe(ex => {
       this.ongoingTraining.set(!!ex);
     });
+  }
+
+  ngOnDestroy(): void {
+    this.sub?.unsubscribe();
   }
 }

@@ -1,4 +1,5 @@
-import { Component, ElementRef, inject, OnInit, viewChild } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { AfterViewInit, Component, ElementRef, inject, OnDestroy, OnInit, viewChild } from '@angular/core';
 import { TrainingService } from '../training.service';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { CommonModule, DatePipe } from '@angular/common';
@@ -28,23 +29,33 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
   templateUrl: './past-training.html',
   styleUrl: './past-training.less'
 })
-export class PastTraining implements OnInit {
+export class PastTraining implements OnInit, OnDestroy, AfterViewInit {
   trainingService = inject(TrainingService);
   exercises = new MatTableDataSource<Exercise>(); // = new MatTableDataSource(this.trainingService.getExercises());
-  sort = viewChild.required<MatSort>(MatSort);
-  paginator = viewChild.required<MatPaginator>(MatPaginator);
-  filterInput = viewChild.required<ElementRef<HTMLInputElement>>('filterInput');
+  sort = viewChild<MatSort>(MatSort);
+  paginator = viewChild<MatPaginator>(MatPaginator);
+  filterInput = viewChild<ElementRef<HTMLInputElement>>('filterInput');
   filterValue = '';
+  Subscription?: Subscription;
 
   ngOnInit() {
     // Subscribe to finished exercises updates
-    this.trainingService.finishedExercisesChanged.subscribe(list => {
+    this.Subscription = this.trainingService.finishedExercisesChanged.subscribe(list => {
       this.exercises.data = list;
     });
     // Initial fetch
     this.trainingService.fetchFinishedExercises();
-    this.exercises.sort = this.sort();
-    this.exercises.paginator = this.paginator();
+  }
+
+  ngAfterViewInit(): void {
+    const sortElement = this.sort();
+    const paginatorElement = this.paginator();
+    if (sortElement) this.exercises.sort = sortElement;
+    if (paginatorElement) this.exercises.paginator = paginatorElement;
+  }
+
+  ngOnDestroy() {
+    this.Subscription?.unsubscribe();
   }
 
   applyFilter(event: Event) {
@@ -56,7 +67,10 @@ export class PastTraining implements OnInit {
   clearFilter() {
     this.filterValue = '';
     this.exercises.filter = '';
-    this.filterInput().nativeElement.value = '';
+    const input = this.filterInput();
+    if (input) {
+      input.nativeElement.value = '';
+    }
   }
 
 }

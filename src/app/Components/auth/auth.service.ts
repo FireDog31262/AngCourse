@@ -1,9 +1,8 @@
-import { MatNativeDateModule } from '@angular/material/core';
-import { inject, Injectable, signal, ChangeDetectorRef, ApplicationRef } from "@angular/core";
+import { inject, Injectable, signal } from "@angular/core";
 import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, authState } from "@angular/fire/auth";
 import { AuthData } from "./auth-data.model";
 import { User } from "./user.model";
-import { BehaviorSubject, Subject } from "rxjs";
+import { Subject } from "rxjs";
 import { Router } from "@angular/router";
 import { doc, Firestore, setDoc, getDoc } from '@angular/fire/firestore';
 

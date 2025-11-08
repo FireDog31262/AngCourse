@@ -67,14 +67,18 @@ export class Header implements OnInit, OnDestroy {
   private subs = new Subscription();
 
   ngOnInit(): void {
-    const s = this.sidenav();    // Wire to sidenav lifecycle to coordinate animations
-    this.subs.add(s.openedStart.subscribe(() => this.onSidenavOpenStart()));
-    this.subs.add(
-      s.openedChange.subscribe((opened) =>
-        opened ? this.onSidenavOpenDone() : this.onSidenavCloseDone()
-      )
-    );
-    this.subs.add(s.closedStart.subscribe(() => this.onSidenavCloseStart()));
+    // Use queueMicrotask to defer signal access after initialization
+    queueMicrotask(() => {
+      const s = this.sidenav();    // Wire to sidenav lifecycle to coordinate animations
+      this.subs.add(s.openedStart.subscribe(() => this.onSidenavOpenStart()));
+      this.subs.add(
+        s.openedChange.subscribe((opened) =>
+          opened ? this.onSidenavOpenDone() : this.onSidenavCloseDone()
+        )
+      );
+      this.subs.add(s.closedStart.subscribe(() => this.onSidenavCloseStart()));
+    });
+
     this.subs.add(this.authService.loggedIn.subscribe((isLoggedIn) => {
       this.loggedIn.set(isLoggedIn);
     }));

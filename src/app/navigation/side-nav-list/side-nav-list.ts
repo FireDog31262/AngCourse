@@ -30,7 +30,9 @@ export class SideNavList implements OnInit, OnDestroy {
 
   logout() {
     const sidenav = this.sidenav();
-    sidenav.close();
+    if (sidenav) {
+      sidenav.close();
+    }
     this.authService.logout();
   }
 }

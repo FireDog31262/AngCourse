@@ -1,9 +1,9 @@
-import { afterNextRender, Component, ElementRef, inject, OnDestroy, OnInit, signal, viewChild } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelect, MatSelectModule } from '@angular/material/select';
+import { MatSelectModule } from '@angular/material/select';
 import { TrainingService } from '../training.service';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Exercise } from '../excercise.model';
@@ -21,16 +21,7 @@ export class NewTraining implements OnInit, OnDestroy {
   availableExcercises = signal<Exercise[]>([]);
   selected = new FormControl('', [Validators.required]);
 
-  matSelect = viewChild.required<MatSelect>(MatSelect);
-
   private subscription?: Subscription;
-
-  constructor() {
-    afterNextRender(() => {
-      const select = this.matSelect();
-      select.focus();
-    });
-  }
 
   ngOnInit(): void {
     this.subscription = this.trainingService.exercisesChanged.subscribe(exercises => {
@@ -43,7 +34,10 @@ export class NewTraining implements OnInit, OnDestroy {
     this.subscription?.unsubscribe();
   }
 
-  startExercise(exerciseId: string) {
-    this.trainingService.startExercise(exerciseId);
+  onStartTraining() {
+    const exerciseId = this.selected.value;
+    if (exerciseId) {
+      this.trainingService.startExercise(exerciseId);
+    }
   }
 }
