@@ -1,5 +1,5 @@
 import { Header } from './navigation/header/header';
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -26,7 +26,8 @@ import { SideNavList } from './navigation/side-nav-list/side-nav-list';
 ],
   templateUrl: './app.html',
   styleUrls: ['./app.less'],
-  animations: []
+  animations: [],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class App {
 }

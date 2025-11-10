@@ -1,4 +1,4 @@
-@if (!ongoingTraining()){
+@if (!ongoingTraining()) {
 <mat-tab-group>
   <mat-tab label="New Training">
     <app-new-training />
@@ -8,5 +8,5 @@
   </mat-tab>
 </mat-tab-group>
 } @else {
-<app-current-training (exitTraining)="ongoingTraining.set(false)" />
+<app-current-training />
 }

@@ -5,23 +5,34 @@
         Time to start a workout
       </mat-card-title>
     </mat-card-header>
+    @if (!isLoading()) {
     <!-- <img matCardImage src="Card wide image source"> -->
     <mat-card-content fxLayoutAlign="center">
       <mat-form-field appearance="fill" fxFlex="100%">
         <mat-label>Select new training</mat-label>
         <mat-select #SelectedExercise [formControl]="selected" required>
-          @if (availableExcercises().length === 0) {
+          @if (availableExercises().length === 0) {
           <mat-option disabled>No exercises available</mat-option>
           }
-          @for (exercise of availableExcercises(); track exercise.id) {
+          @for (exercise of availableExercises(); track exercise.id) {
           <mat-option [value]="exercise.id">{{ exercise.Name || '(Unnamed)' }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
     </mat-card-content>
+
     <mat-card-actions fxLayoutAlign="center">
+      @if (availableExercises().length > 0) {
       <button mat-button type="submit" [disabled]="selected.invalid" (click)="onStartTraining()">Start
         Workout</button>
+      } @else {
+      <button mat-button (click)="fetchAvailableExercises()">Fetch Again</button>
+      }
     </mat-card-actions>
+    } @else {
+    <mat-card-content fxLayoutAlign="center">
+      <mat-spinner></mat-spinner>
+    </mat-card-content>
+    }
   </mat-card>
 </section>

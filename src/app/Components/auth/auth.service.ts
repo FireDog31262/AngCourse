@@ -1,21 +1,24 @@
-import { inject, Injectable, signal } from "@angular/core";
-import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, authState } from "@angular/fire/auth";
+import { computed, inject, Injectable, signal } from "@angular/core";
+import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "@angular/fire/auth";
 import { AuthData } from "./auth-data.model";
 import { User } from "./user.model";
-import { Subject } from "rxjs";
 import { Router } from "@angular/router";
 import { doc, Firestore, setDoc, getDoc } from '@angular/fire/firestore';
+import { UiService } from "../../shared/ui.service";
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private user = signal<User | null>(null);
-  loggedIn = new Subject<boolean>();
+  private readonly userSignal = signal<User | null>(null);
+  readonly user = this.userSignal.asReadonly();
+  readonly isLoggedIn = computed(() => this.userSignal() !== null);
 
-  router = inject(Router);
-  private auth = inject(Auth);
-  private firestore = inject(Firestore);
+  private readonly router = inject(Router);
+  private readonly auth = inject(Auth);
+  private readonly firestore = inject(Firestore);
+  private readonly uiService = inject(UiService);
 
   login(authData: AuthData) {
+    this.uiService.setLoading(true);
     try {
       signInWithEmailAndPassword(this.auth, authData.email, authData.password)
         .then(async result => {
@@ -39,7 +42,7 @@ export class AuthService {
               }
             }
 
-            this.user.set({
+            this.userSignal.set({
               id: result.user.uid,
               email: result.user.email || '',
               name: userData['name'] || '',
@@ -47,23 +50,26 @@ export class AuthService {
             });
           } else {
             // Fallback if no Firestore document exists
-            this.user.set({
+            this.userSignal.set({
               id: result.user.uid,
               email: result.user.email || '',
               name: result.user.displayName || '',
               birthday: new Date()
             });
           }
-
-          this.loggedIn.next(true);
+          this.uiService.setLoading(false);
           this.router.navigate(['/training']);
         })
         .catch(error => {
-            alert(`Login failed: ${error.message}`);
+          this.uiService.setLoading(false);
+          this.uiService.showSnackbar("Login failed: " + error.message, 'Close', 5000);
+            // alert(`Login failed: ${error.message}`);
           });
     } catch (error: any) {
+      this.uiService.setLoading(false);
+      this.uiService.showSnackbar("Login failed: " + error.message, 'Close', 5000);
       console.error('❌ Login exception:', error);
-      alert('Login failed. Please check your connection and try again.');
+      // alert('Login failed. Please check your connection and try again.');
     }
   }
 
@@ -71,24 +77,24 @@ export class AuthService {
     signOut(this.auth)
       .then(() => {
         console.log('✅ Firebase logout successful');
-        this.user.set(null);
-        this.loggedIn.next(false);
+        this.userSignal.set(null);
         this.router.navigate(['/']);
       })
       .catch(error => {
         console.error('❌ Logout error:', error);
         // If Firebase logout fails (not configured), just clear local state
-        this.user.set(null);
-        this.loggedIn.next(false);
+        this.userSignal.set(null);
         this.router.navigate(['/']);
       });
   }
 
   getUser() {
-    return { ...this.user() };
+    const currentUser = this.userSignal();
+    return currentUser ? { ...currentUser } : null;
   }
 
   async registerUser(userData: User & { password: string }) {
+    this.uiService.setLoading(true);
     try {
       // Step 1: Register user with Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(this.auth, userData.email, userData.password);
@@ -106,11 +112,13 @@ export class AuthService {
 
       // Set the document ID to be the same as the user's UID
       await setDoc(doc(this.firestore, "users", uid), userProfileData);
-
+      this.uiService.setLoading(false);
       console.log("Successfully registered user and created profile for UID:", uid);
       // You can now navigate the user to your main app screen
       this.router.navigate(['/login']);
     } catch (error: any) {
+      this.uiService.setLoading(false);
+      this.uiService.showSnackbar("Registration failed: " + error.message, 'Close', 5000);
       console.error("Error during user registration or profile creation:", error.message);
       // Handle specific errors (e.g., auth/email-already-in-use, auth/weak-password)
       // You might want to display a user-friendly error message
@@ -118,7 +126,6 @@ export class AuthService {
   }
 
   isAuthenticated() {
-    const authenticated = this.user() !== null;
-    return authenticated;
+    return this.isLoggedIn();
   }
 }

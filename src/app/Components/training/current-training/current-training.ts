@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, effect, inject, signal } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog } from '@angular/material/dialog';
@@ -14,26 +14,39 @@ import { TrainingService } from '../training.service';
   styleUrl: './current-training.less',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CurrentTraining implements OnInit, OnDestroy {
- ongoingTraining = signal(true);
- progress = signal(0);
- timer: number | undefined;
- readonly dialog = inject(MatDialog);
- exitTraining = output<void>();
- trainingService = inject(TrainingService);
+export class CurrentTraining implements OnDestroy {
+  protected readonly progress = signal(0);
+  private timer: number | undefined;
+  private readonly dialog = inject(MatDialog);
+  private readonly trainingService = inject(TrainingService);
 
-  ngOnInit() {
-    this.startTimer();
+  constructor() {
+    effect(() => {
+      const exercise = this.trainingService.runningExercise();
+      this.stopTimer();
+      this.progress.set(0);
+
+      if (!exercise || typeof exercise.Duration !== 'number') {
+        return;
+      }
+
+      this.startTimer(exercise.Duration);
+    });
   }
 
   onStop() {
+    const exercise = this.trainingService.runningExercise();
+    if (!exercise || typeof exercise.Duration !== 'number') {
+      return;
+    }
+
     this.stopTimer();
     const dialogRef = this.dialog.open(StopTrainingDialog, { data: { progress: this.progress() } });
     dialogRef.afterClosed().subscribe((confirmed: boolean) => {
       if (confirmed) {
         this.trainingService.cancelExercise(this.progress());
       } else {
-        this.startTimer();
+        this.startTimer(exercise.Duration);
       }
     });
   }
@@ -42,20 +55,18 @@ export class CurrentTraining implements OnInit, OnDestroy {
     this.stopTimer();
   }
 
-  private startTimer() {
+  private startTimer(durationMinutes: number) {
     this.stopTimer();
-    const exercise = this.trainingService.getRunningExercise();
-    if (!exercise || typeof exercise.Duration !== 'number') {
-      // no running exercise available - do not start the timer
-      return;
-    }
-    const step = (exercise.Duration / 100) * 1000;
+    const step = (durationMinutes / 100) * 1000;
     this.timer = window.setInterval(() => {
-      this.progress.set(this.progress() + 5);
-      if (this.progress() >= 100) {
+      const next = this.progress() + 5;
+      if (next >= 100) {
+        this.progress.set(100);
         this.stopTimer();
         this.trainingService.completeExercise();
+        return;
       }
+      this.progress.set(next);
     }, step);
   }
 

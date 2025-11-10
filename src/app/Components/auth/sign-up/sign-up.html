@@ -23,6 +23,10 @@
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
     <mat-checkbox ngModel name="terms" required labelPosition="before">Agree to terms and conditions</mat-checkbox>
+    @if (isLoading()) {
+    <mat-spinner></mat-spinner>
+    } @else {
     <button type="submit" mat-raised-button color="primary" [disabled]="f.invalid">Submit</button>
+    }
   </form>
 </section>

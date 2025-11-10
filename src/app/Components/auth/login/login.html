@@ -13,6 +13,10 @@
         #pwd="ngModel" minlength="6" autocomplete="current-password">
       <mat-hint align="end">{{pwd.value?.length }} / 6</mat-hint>
     </mat-form-field>
+    @if (isLoading()) {
+    <mat-spinner></mat-spinner>
+    } @else {
     <button type="submit" mat-raised-button color="primary" [disabled]="f.invalid">Submit</button>
+    }
   </form>
 </section>

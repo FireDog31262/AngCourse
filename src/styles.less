@@ -2,6 +2,22 @@
 
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
 
+.mat-mdc-snack-bar-container.error-snackbar {
+  --mdc-snackbar-container-color: #c62828;
+  --mdc-snackbar-supporting-text-color: #ffffff;
+  --mdc-snackbar-action-color: #ffffff;
+}
+
+.mat-mdc-snack-bar-container.error-snackbar .mdc-snackbar__surface {
+  background-color: #c62828 !important;
+}
+
+.mat-mdc-snack-bar-container.error-snackbar .mdc-snackbar__label,
+.mat-mdc-snack-bar-container.error-snackbar .mdc-snackbar__actions .mat-mdc-button,
+.mat-mdc-snack-bar-container.error-snackbar .mdc-button__label {
+  color: var(--mdc-snackbar-action-color) !important;
+}
+
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 

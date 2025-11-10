@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FlexLayoutModule } from "@angular/flex-layout";
 
 @Component({
@@ -6,7 +6,8 @@ import { FlexLayoutModule } from "@angular/flex-layout";
   standalone: true,
   imports: [FlexLayoutModule],
   templateUrl: './welcome.html',
-  styleUrl: './welcome.less'
+  styleUrl: './welcome.less',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Welcome {
 

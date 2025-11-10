@@ -1,6 +1,6 @@
 import { AuthService } from './../../Components/auth/auth.service';
 import { MatIconModule } from '@angular/material/icon';
-import { Component, OnDestroy, OnInit, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject, input, signal } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -52,11 +52,12 @@ import { Subscription } from 'rxjs';
       transition('open => closed', animate('300ms cubic-bezier(.4,0,.2,1)')),
     ]),
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Header implements OnInit, OnDestroy {
   sidenav = input.required<MatSidenav>();
   authService = inject(AuthService);
-  loggedIn = signal<boolean>(false);
+  protected readonly loggedIn = this.authService.isLoggedIn;
 
   protected menuIconState = signal<'visible' | 'hidden'>('visible');
   protected closeIconRotateState = signal<'closed' | 'open'>('closed');
@@ -79,9 +80,6 @@ export class Header implements OnInit, OnDestroy {
       this.subs.add(s.closedStart.subscribe(() => this.onSidenavCloseStart()));
     });
 
-    this.subs.add(this.authService.loggedIn.subscribe((isLoggedIn) => {
-      this.loggedIn.set(isLoggedIn);
-    }));
   }
 
   ngOnDestroy(): void {

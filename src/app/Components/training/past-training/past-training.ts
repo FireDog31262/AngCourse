@@ -1,5 +1,4 @@
-import { Subscription } from 'rxjs';
-import { AfterViewInit, Component, ElementRef, inject, OnDestroy, OnInit, viewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, effect, inject, OnInit, viewChild } from '@angular/core';
 import { TrainingService } from '../training.service';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { CommonModule, DatePipe } from '@angular/common';
@@ -27,24 +26,25 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
     MatPaginatorModule
   ],
   templateUrl: './past-training.html',
-  styleUrl: './past-training.less'
+  styleUrl: './past-training.less',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PastTraining implements OnInit, OnDestroy, AfterViewInit {
-  trainingService = inject(TrainingService);
-  exercises = new MatTableDataSource<Exercise>(); // = new MatTableDataSource(this.trainingService.getExercises());
+export class PastTraining implements OnInit, AfterViewInit {
+  private readonly trainingService = inject(TrainingService);
+  protected readonly exercises = new MatTableDataSource<Exercise>();
   sort = viewChild<MatSort>(MatSort);
   paginator = viewChild<MatPaginator>(MatPaginator);
   filterInput = viewChild<ElementRef<HTMLInputElement>>('filterInput');
   filterValue = '';
-  Subscription?: Subscription;
+
+  constructor() {
+    effect(() => {
+      this.exercises.data = this.trainingService.finishedExercises();
+    });
+  }
 
   ngOnInit() {
-    // Subscribe to finished exercises updates
-    this.Subscription = this.trainingService.finishedExercisesChanged.subscribe(list => {
-      this.exercises.data = list;
-    });
-    // Initial fetch
-    this.trainingService.fetchFinishedExercises();
+    void this.trainingService.fetchFinishedExercises();
   }
 
   ngAfterViewInit(): void {
@@ -52,10 +52,6 @@ export class PastTraining implements OnInit, OnDestroy, AfterViewInit {
     const paginatorElement = this.paginator();
     if (sortElement) this.exercises.sort = sortElement;
     if (paginatorElement) this.exercises.paginator = paginatorElement;
-  }
-
-  ngOnDestroy() {
-    this.Subscription?.unsubscribe();
   }
 
   applyFilter(event: Event) {
