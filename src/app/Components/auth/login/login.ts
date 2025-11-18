@@ -1,22 +1,20 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { FlexLayoutModule } from '@angular/flex-layout';
-import { FormsModule, NgForm } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { AuthService } from '../auth.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { UiService } from '../../../shared/ui.service';
+import * as fromRoot from '../../../app.reducer';
+import { Store } from '@ngrx/store';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
   imports: [
     MatFormFieldModule,
     MatInputModule,
-    FlexLayoutModule,
     MatButtonModule,
-    FormsModule,
+    ReactiveFormsModule,
     MatProgressSpinnerModule
   ],
   templateUrl: './login.html',
@@ -25,18 +23,30 @@ import { UiService } from '../../../shared/ui.service';
 })
 export class Login {
   private readonly authService = inject(AuthService);
-  private readonly uiService = inject(UiService);
-  protected readonly isLoading = this.uiService.isLoading;
+  private readonly store = inject(Store<fromRoot.State>);
+  private readonly fb = inject(NonNullableFormBuilder);
+  protected readonly isLoading = this.store.selectSignal(fromRoot.getIsLoading);
 
-  onSubmit(form: NgForm) {
-    if (!form.valid) {
-      console.error('❌ Form is invalid');
+  protected readonly loginForm = this.fb.group({
+    email: this.fb.control('', { validators: [Validators.required, Validators.email] }),
+    password: this.fb.control('', { validators: [Validators.required, Validators.minLength(6)] })
+  });
+
+  protected get emailControl() {
+    return this.loginForm.controls.email;
+  }
+
+  protected get passwordControl() {
+    return this.loginForm.controls.password;
+  }
+
+  onSubmit() {
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
       return;
     }
 
-    this.authService.login({
-      email: form.value.email,
-      password: form.value.password
-    });
+    const { email, password } = this.loginForm.getRawValue();
+    this.authService.login({ email, password });
   }
 }

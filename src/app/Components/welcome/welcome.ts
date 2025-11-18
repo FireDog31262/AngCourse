@@ -1,14 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { FlexLayoutModule } from "@angular/flex-layout";
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-welcome',
-  standalone: true,
-  imports: [FlexLayoutModule],
+  imports: [NgOptimizedImage],
   templateUrl: './welcome.html',
   styleUrl: './welcome.less',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Welcome {
-
+  protected readonly heroImage = 'images/welcome-hero.svg';
 }

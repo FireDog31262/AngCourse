@@ -1,0 +1,26 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="welcomeHeroTitle welcomeHeroDesc">
+  <title id="welcomeHeroTitle">Strength training hero art</title>
+  <desc id="welcomeHeroDesc">Abstract illustration of athletes training with bold gradients and geometric accents.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4b6cb7" />
+      <stop offset="100%" stop-color="#182848" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ff9a9e" />
+      <stop offset="100%" stop-color="#fad0c4" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#bg)" rx="48" />
+  <circle cx="320" cy="260" r="180" fill="rgba(255,255,255,0.07)" />
+  <circle cx="900" cy="220" r="140" fill="rgba(255,255,255,0.05)" />
+  <path d="M260 580 L380 340 L520 420 L460 600 Z" fill="rgba(255,255,255,0.08)" />
+  <path d="M620 540 L760 320 L940 420 L840 620 Z" fill="rgba(255,255,255,0.08)" />
+  <path d="M180 660 C260 560 420 560 500 660" stroke="#ffffff" stroke-width="6" stroke-linecap="round" opacity="0.4" />
+  <path d="M680 660 C760 560 920 560 1000 660" stroke="#ffffff" stroke-width="6" stroke-linecap="round" opacity="0.4" />
+  <rect x="220" y="520" width="180" height="90" rx="20" fill="url(#accent)" opacity="0.85" />
+  <rect x="780" y="480" width="220" height="120" rx="28" fill="url(#accent)" opacity="0.9" />
+  <text x="260" y="580" font-family="'Segoe UI', 'Roboto', sans-serif" font-size="42" fill="#102348" font-weight="700">TRAIN</text>
+  <text x="810" y="550" font-family="'Segoe UI', 'Roboto', sans-serif" font-size="38" fill="#102348" font-weight="600">RECOVER</text>
+  <text x="500" y="200" font-family="'Segoe UI', 'Roboto', sans-serif" font-size="56" fill="#fff" font-weight="600" opacity="0.9">STRONGER EVERY DAY</text>
+</svg>

@@ -1,10 +1,10 @@
-<mat-sidenav-container [hasBackdrop]="true">
-  <mat-sidenav color="primary" #sidenav mode="over">
+<mat-sidenav-container class="app-shell__container" [hasBackdrop]="true">
+  <mat-sidenav #sidenav mode="over" class="app-shell__sidenav">
     <app-side-nav-list [sidenav]="sidenav"></app-side-nav-list>
   </mat-sidenav>
-  <mat-sidenav-content>
+  <mat-sidenav-content class="app-shell__content">
     <app-header [sidenav]="sidenav"></app-header>
-    <main>
+    <main class="app-shell__main">
       <router-outlet />
     </main>
   </mat-sidenav-content>

@@ -5,6 +5,11 @@ import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 import { routes } from './app.routes';
+import { provideStore } from '@ngrx/store';
+import { reducers } from './app.reducer';
+import { provideEffects } from '@ngrx/effects';
+import { UiEffects } from './shared/ui.effects';
+import { TrainingEffects } from './Components/training/training.effects';
 
 export const firebaseConfig = {
   apiKey: "AIzaSyD97S1Gm8DjdBrc_mrmknk0KXvdrqSO42M",
@@ -23,6 +28,8 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
     provideFirestore(() => getFirestore()),
-    provideAuth(() => getAuth())
+    provideAuth(() => getAuth()),
+    provideStore(reducers),
+    provideEffects(UiEffects, TrainingEffects)
   ]
 };

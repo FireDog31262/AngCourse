@@ -1,32 +1,44 @@
-<section>
-  <form fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="center center" #f="ngForm" (ngSubmit)="onSubmit(f)">
+<section class="auth-section">
+  <form class="auth-form" [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
     <mat-form-field>
       <mat-label>Name</mat-label>
-      <input ngModel name="name" type="text" matInput placeholder="Name" required>
+      <input formControlName="name" type="text" matInput placeholder="Name">
+      @if (signUpForm.controls.name.invalid && (signUpForm.controls.name.dirty || signUpForm.controls.name.touched)) {
       <mat-error>Please enter a valid name.</mat-error>
+      }
     </mat-form-field>
     <mat-form-field>
       <mat-label>Email</mat-label>
-      <input ngModel name="email" type="email" matInput placeholder="Email" email required>
+      <input formControlName="email" type="email" matInput placeholder="Email" autocomplete="email">
+      @if (signUpForm.controls.email.invalid && (signUpForm.controls.email.dirty || signUpForm.controls.email.touched))
+      {
       <mat-error>Please enter a valid email.</mat-error>
+      }
     </mat-form-field>
     <mat-form-field hintLabel="Should be at least 6 characters">
       <mat-label>Password</mat-label>
-      <input ngModel name="password" type="password" matInput placeholder="Password" required #pwd="ngModel"
-        minlength="6">
-      <mat-hint align="end">{{pwd.value?.length }} / 6</mat-hint>
+      <input formControlName="password" type="password" matInput placeholder="Password" autocomplete="new-password">
+      <mat-hint align="end">{{ passwordControl.value.length }} / 6</mat-hint>
+      @if (passwordControl.invalid && (passwordControl.dirty || passwordControl.touched)) {
+      <mat-error>Password must be at least 6 characters.</mat-error>
+      }
     </mat-form-field>
     <mat-form-field>
-      <input [max]="maxDate" matInput [matDatepicker]="picker" placeholder="Your Birthday" ngModel name="birthday"
-        required>
+      <input [max]="maxDate" matInput [matDatepicker]="picker" placeholder="Your Birthday" formControlName="birthday">
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
+      @if (signUpForm.controls.birthday.invalid && (signUpForm.controls.birthday.dirty ||
+      signUpForm.controls.birthday.touched)) {
+      <mat-error>Please select your birthday.</mat-error>
+      }
     </mat-form-field>
-    <mat-checkbox ngModel name="terms" required labelPosition="before">Agree to terms and conditions</mat-checkbox>
-    @if (isLoading()) {
-    <mat-spinner></mat-spinner>
-    } @else {
-    <button type="submit" mat-raised-button color="primary" [disabled]="f.invalid">Submit</button>
-    }
+    <mat-checkbox formControlName="terms" required labelPosition="before">Agree to terms and conditions</mat-checkbox>
+    <div class="auth-action">
+      @if (isLoading()) {
+      <mat-spinner></mat-spinner>
+      } @else {
+      <button type="submit" mat-raised-button color="primary" [disabled]="signUpForm.invalid">Submit</button>
+      }
+    </div>
   </form>
 </section>

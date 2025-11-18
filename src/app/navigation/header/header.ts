@@ -1,11 +1,11 @@
-import { AuthService } from './../../Components/auth/auth.service';
+import { SetUnauthenticated } from './../../Components/auth/auth.actions';
 import { MatIconModule } from '@angular/material/icon';
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject, input, signal } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
-import { Router, RouterModule } from '@angular/router';
-import { ExtendedModule } from '@angular/flex-layout';
+import { RouterModule } from '@angular/router';
+import * as fromRoot from '../../app.reducer';
 import {
   animate,
   state,
@@ -14,16 +14,15 @@ import {
   trigger,
 } from '@angular/animations';
 import { Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-header',
-  standalone: true,
   imports: [
     MatToolbarModule,
     MatIconModule,
     MatButtonModule,
     RouterModule,
-    ExtendedModule,
   ],
   templateUrl: './header.html',
   styleUrls: ['./header.less'],
@@ -56,8 +55,10 @@ import { Subscription } from 'rxjs';
 })
 export class Header implements OnInit, OnDestroy {
   sidenav = input.required<MatSidenav>();
-  authService = inject(AuthService);
-  protected readonly loggedIn = this.authService.isLoggedIn;
+  // authService = inject(AuthService);
+  // protected readonly loggedIn = this.authService.isLoggedIn;
+  private store = inject(Store<fromRoot.State>);
+  protected readonly loggedIn = this.store.selectSignal(fromRoot.getIsAuthenticated);
 
   protected menuIconState = signal<'visible' | 'hidden'>('visible');
   protected closeIconRotateState = signal<'closed' | 'open'>('closed');
@@ -129,6 +130,6 @@ export class Header implements OnInit, OnDestroy {
   }
 
   logOut() {
-    this.authService.logout();
+    this.store.dispatch(new SetUnauthenticated());
   }
 }

@@ -1,0 +1,122 @@
+import { Injectable, inject } from '@angular/core';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Firestore, addDoc, collection, getDocs, query, where } from '@angular/fire/firestore';
+import { EMPTY, from, of } from 'rxjs';
+import { catchError, map, startWith, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { LOAD_AVAILABLE_EXERCISES, LOAD_FINISHED_EXERCISES, PERSIST_EXERCISE_RESULT, PersistExerciseResult, LoadFinishedExercises } from './training.actions';
+import * as UI from '../../shared/ui.actions';
+import { TrainingService } from './training.service';
+import { Exercise } from './excercise.model';
+import { Store } from '@ngrx/store';
+import * as fromRoot from '../../app.reducer';
+
+@Injectable()
+export class TrainingEffects {
+  private readonly actions$ = inject(Actions);
+  private readonly firestore = inject(Firestore);
+  private readonly trainingService = inject(TrainingService);
+  private readonly store = inject(Store<fromRoot.State>);
+
+  loadAvailableExercises$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(LOAD_AVAILABLE_EXERCISES),
+      switchMap(() =>
+        from(getDocs(collection(this.firestore, 'availableExcercises'))).pipe(
+          map((snapshot) => snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Exercise)),
+          tap((exercises) => this.trainingService.setAvailableExercises(exercises)),
+          map(() => new UI.StopLoading()),
+          startWith(new UI.StartLoading()),
+          catchError((error) => {
+            console.error('❌ Error fetching available exercises:', error);
+            this.trainingService.setAvailableExercises([]);
+            return of(
+              new UI.StopLoading(),
+              new UI.ShowSnackbar({
+                message: 'Fetching exercises failed, please try again later.',
+                action: 'Close',
+                duration: 5000
+              })
+            );
+          })
+        )
+      )
+    )
+  );
+
+  loadFinishedExercises$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(LOAD_FINISHED_EXERCISES),
+      withLatestFrom(this.store.select(fromRoot.getUser)),
+      switchMap(([, user]) => {
+        if (!user) {
+          this.trainingService.setFinishedExercises([]);
+          return EMPTY;
+        }
+        const finishedCollection = collection(this.firestore, 'finishedExercises');
+        const userExercisesQuery = query(finishedCollection, where('userId', '==', user.id));
+        return from(getDocs(userExercisesQuery)).pipe(
+          map((snapshot) =>
+            snapshot.docs.map((doc) => {
+              const payload = doc.data() as Record<string, unknown>;
+              return {
+                id: doc.id ?? (payload?.['id'] as string) ?? '',
+                Name: (payload?.['name'] ?? payload?.['Name'] ?? '') as string,
+                Duration: (payload?.['duration'] ?? payload?.['Duration'] ?? 0) as number,
+                calories: (payload?.['calories'] ?? 0) as number,
+                date: payload?.['date']
+                  ? typeof payload['date'] === 'string'
+                    ? new Date(payload['date'] as string)
+                    : (payload['date'] as { toDate?: () => Date }).toDate?.() ?? new Date(payload['date'] as Date)
+                  : undefined,
+                state: (payload?.['state'] as 'completed' | 'cancelled' | null) ?? null,
+                userId: payload?.['userId'] as string | undefined
+              } as Exercise;
+            })
+          ),
+          tap((exercises) => this.trainingService.setFinishedExercises(exercises)),
+          map(() => new UI.StopLoading()),
+          startWith(new UI.StartLoading()),
+          catchError((error) => {
+            console.error('❌ Error fetching finished exercises:', error);
+            return of(
+              new UI.StopLoading(),
+              new UI.ShowSnackbar({
+                message: 'Fetching past exercises failed. Please try again later.',
+                action: 'Close',
+                duration: 5000
+              })
+            );
+          })
+        );
+      })
+    )
+  );
+
+  persistExerciseResult$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(PERSIST_EXERCISE_RESULT),
+      switchMap((action: PersistExerciseResult) =>
+        from(addDoc(collection(this.firestore, 'finishedExercises'), action.payload.exercise)).pipe(
+          switchMap(() => [
+            new LoadFinishedExercises(),
+            new UI.ShowSnackbar({
+              message: 'Workout progress saved.',
+              action: 'Close',
+              duration: 3000
+            })
+          ]),
+          catchError((error) => {
+            console.error('❌ Error saving exercise:', error);
+            return of(
+              new UI.ShowSnackbar({
+                message: 'Saving workout failed. Please try again.',
+                action: 'Close',
+                duration: 5000
+              })
+            );
+          })
+        )
+      )
+    )
+  );
+}

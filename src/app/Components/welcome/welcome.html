@@ -1,15 +1,21 @@
-<div class="welcome" fxLayout.lt-sm="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="20px" fxLayoutAlign="center center"
-  fxFlex>
-  <section>
-    <h1>ACTIVITY</h1>
-    <p>Stay active and enjoy better health and more fun!</p>
-  </section>
-  <section>
-    <h1>COMMUNITY</h1>
-    <p>Get to know other people who share your passion!</p>
-  </section>
-  <section>
-    <h1>CHALLENGES</h1>
-    <p>Never stop! Dive into new challenges every day</p>
-  </section>
-</div>
+<section class="welcome">
+  <figure class="welcome__hero" aria-label="Strength training inspiration">
+    <img class="welcome__hero-image" [ngSrc]="heroImage" width="1200" height="800"
+      alt="Athletes training in a modern gym" />
+  </figure>
+
+  <div class="welcome__grid">
+    <article class="welcome__card">
+      <h1>ACTIVITY</h1>
+      <p>Stay active and enjoy better health and more fun!</p>
+    </article>
+    <article class="welcome__card">
+      <h1>COMMUNITY</h1>
+      <p>Get to know other people who share your passion!</p>
+    </article>
+    <article class="welcome__card">
+      <h1>CHALLENGES</h1>
+      <p>Never stop! Dive into new challenges every day.</p>
+    </article>
+  </div>
+</section>

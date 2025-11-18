@@ -1,14 +1,14 @@
-<section class="new-training" fxLayout="row" fxLayoutAlign="center" fxFill>
-  <mat-card appearance="outlined" fxFlex.lt-sm="100%" fxFlex="400px">
-    <mat-card-header fxLayoutAlign="center">
+<section class="new-training">
+  <mat-card appearance="outlined" class="new-training__card">
+    <mat-card-header class="new-training__header">
       <mat-card-title>
         Time to start a workout
       </mat-card-title>
     </mat-card-header>
     @if (!isLoading()) {
     <!-- <img matCardImage src="Card wide image source"> -->
-    <mat-card-content fxLayoutAlign="center">
-      <mat-form-field appearance="fill" fxFlex="100%">
+    <mat-card-content class="new-training__content">
+      <mat-form-field appearance="fill">
         <mat-label>Select new training</mat-label>
         <mat-select #SelectedExercise [formControl]="selected" required>
           @if (availableExercises().length === 0) {
@@ -21,7 +21,7 @@
       </mat-form-field>
     </mat-card-content>
 
-    <mat-card-actions fxLayoutAlign="center">
+    <mat-card-actions class="new-training__actions">
       @if (availableExercises().length > 0) {
       <button mat-button type="submit" [disabled]="selected.invalid" (click)="onStartTraining()">Start
         Workout</button>
@@ -30,7 +30,7 @@
       }
     </mat-card-actions>
     } @else {
-    <mat-card-content fxLayoutAlign="center">
+    <mat-card-content class="new-training__content">
       <mat-spinner></mat-spinner>
     </mat-card-content>
     }

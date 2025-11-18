@@ -7,7 +7,6 @@ import { TrainingService } from '../training.service';
 
 @Component({
   selector: 'app-training',
-  standalone: true,
   imports: [MatTabsModule, NewTraining, CurrentTraining, PastTraining],
   templateUrl: './training.html',
   styleUrl: './training.less',

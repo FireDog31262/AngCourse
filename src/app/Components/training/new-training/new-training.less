@@ -1,4 +1,38 @@
 .new-training {
   padding: 30px;
+  display: flex;
+  justify-content: center;
+}
+
+.new-training__card {
+  width: 100%;
+  max-width: 420px;
+}
+
+.new-training__header,
+.new-training__content,
+.new-training__actions {
+  display: flex;
+  justify-content: center;
+}
+
+.new-training__content {
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.new-training__actions {
+  gap: 12px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+@media (max-width: 599px) {
+  .new-training {
+    padding: 16px;
+  }
 }
 

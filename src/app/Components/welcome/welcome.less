@@ -1,3 +1,48 @@
 .welcome {
-  text-align: center;
+  display: grid;
+  gap: 24px;
+  padding: 32px 24px;
+  align-items: center;
+}
+
+.welcome__hero {
+  margin: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.welcome__hero-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.welcome__grid {
+  display: grid;
+  gap: 16px;
+}
+
+.welcome__card {
+  padding: 20px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  text-align: left;
+}
+
+.welcome__card h1 {
+  margin: 0 0 8px;
+  font-size: 1.5rem;
+  letter-spacing: 0.08em;
+}
+
+@media (min-width: 768px) {
+  .welcome {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .welcome__grid {
+    grid-template-columns: 1fr;
+  }
 }

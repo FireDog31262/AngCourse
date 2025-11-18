@@ -1,14 +1,23 @@
 import { Routes } from '@angular/router';
-import { Login } from './Components/auth/login/login';
-import { SignUp } from './Components/auth/sign-up/sign-up';
-import { Training } from './Components/training/training/training';
-import { Welcome } from './Components/welcome/welcome';
-import { AuthGuard } from './Components/auth/auth.guard';
+import { authGuard } from './Components/auth/auth.guard';
 
 export const routes: Routes = [
-  { path: '', component: Welcome },
-  { path: 'signup', component: SignUp },
-  { path: 'login', component: Login },
-  { path: 'training', component: Training, canActivate: [AuthGuard] },
+  {
+    path: '',
+    loadComponent: () => import('./Components/welcome/welcome').then(m => m.Welcome)
+  },
+  {
+    path: 'signup',
+    loadComponent: () => import('./Components/auth/sign-up/sign-up').then(m => m.SignUp)
+  },
+  {
+    path: 'login',
+    loadComponent: () => import('./Components/auth/login/login').then(m => m.Login)
+  },
+  {
+    path: 'training',
+    loadComponent: () => import('./Components/training/training/training').then(m => m.Training),
+    canActivate: [authGuard]
+  },
   { path: '**', redirectTo: '' } // Wildcard route for 404 handling
 ];

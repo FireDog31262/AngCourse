@@ -1,15 +1,14 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, effect, inject, signal } from '@angular/core';
-import { FlexLayoutModule } from '@angular/flex-layout';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnDestroy, effect, inject, signal } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog } from '@angular/material/dialog';
 import { StopTrainingDialog } from './stop-training-dialog/stop-training-dialog';
 import { MatButtonModule } from "@angular/material/button";
 import { TrainingService } from '../training.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-current-training',
-  standalone: true,
-  imports: [MatProgressSpinnerModule, FlexLayoutModule, MatButtonModule],
+  imports: [MatProgressSpinnerModule, MatButtonModule],
   templateUrl: './current-training.html',
   styleUrl: './current-training.less',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -19,6 +18,7 @@ export class CurrentTraining implements OnDestroy {
   private timer: number | undefined;
   private readonly dialog = inject(MatDialog);
   private readonly trainingService = inject(TrainingService);
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor() {
     effect(() => {
@@ -42,13 +42,16 @@ export class CurrentTraining implements OnDestroy {
 
     this.stopTimer();
     const dialogRef = this.dialog.open(StopTrainingDialog, { data: { progress: this.progress() } });
-    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
-      if (confirmed) {
-        this.trainingService.cancelExercise(this.progress());
-      } else {
-        this.startTimer(exercise.Duration);
-      }
-    });
+    dialogRef
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this.trainingService.cancelExercise(this.progress());
+        } else {
+          this.startTimer(exercise.Duration);
+        }
+      });
   }
 
   ngOnDestroy(): void {

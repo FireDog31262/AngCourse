@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { StopTrainingDialog } from './stop-training-dialog';
+import { appTestingProviders } from '../../../../../testing/app-testing-providers';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 describe('StopTrainingDialog', () => {
   let component: StopTrainingDialog;
@@ -8,7 +10,11 @@ describe('StopTrainingDialog', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [StopTrainingDialog]
+      imports: [StopTrainingDialog],
+      providers: [
+        ...appTestingProviders(),
+        { provide: MAT_DIALOG_DATA, useValue: { progress: 0 } }
+      ]
     })
     .compileComponents();
 

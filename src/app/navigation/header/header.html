@@ -1,27 +1,24 @@
-<mat-toolbar color="primary">
-  <div fxHide.lt-sm>
-    <a routerLink="/">Simple Fitness Tracker</a>
+<mat-toolbar color="primary" class="header-toolbar">
+  <div class="header__brand header__desktop-only">
+    <a routerLink="/" class="header__logo">Simple Fitness Tracker</a>
   </div>
-  <span style="flex: 1 1 auto;"></span>
-  <div fxHide.lt-sm>
+  <span class="header__spacer"></span>
+  <div class="header__links header__desktop-only">
     @if (loggedIn()) {
-    <a routerLink="/training" class="mx-2">Training</a>
-    <a href="#" (click)="logOut()" class="mx-2">Log Out</a>
+    <a routerLink="/training" class="header__link">Training</a>
+    <a href="#" (click)="logOut()" class="header__link">Log Out</a>
     } @else {
-    <a routerLink="/signup" class="mx-2">Sign Up</a>
-    <a routerLink="/login" class="mx-2">Log In</a>
+    <a routerLink="/signup" class="header__link">Sign Up</a>
+    <a routerLink="/login" class="header__link">Log In</a>
     }
   </div>
-  <div fxHide.gt-xs style="margin-left: auto;">
-    <a routerLink="/">LOGO</a>
-    <button mat-icon-button (click)="sidenav().opened ? sidenav().close() : sidenav().open()"
-      style="position: relative;">
-      <mat-icon class="icon-close" [@rotateCloseIcon]="closeIconRotateState()"
-        style="position: absolute; top: 50%; left: 50%;">
+  <div class="header__mobile-toggle">
+    <a routerLink="/" class="header__logo">Simple Fitness Tracker</a>
+    <button mat-icon-button class="menu-toggle" (click)="sidenav().opened ? sidenav().close() : sidenav().open()">
+      <mat-icon class="icon-close" [@rotateCloseIcon]="closeIconRotateState()">
         close
       </mat-icon>
-      <mat-icon class="icon-menu" [@fadeIcon]="menuIconState()"
-        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+      <mat-icon class="icon-menu" [@fadeIcon]="menuIconState()">
         menu
       </mat-icon>
     </button>

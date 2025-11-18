@@ -1,31 +1,53 @@
-mat-sidenav {
-  width: 50% !important;
-  background-color: #1976d2 !important;
-  color: #fff !important;
+:host {
+  display: block;
+  min-height: 100vh;
+  background: #fafafa;
 }
 
-mat-sidenav-content {
-	height: 100vh !important;
-  width: 100% !important;
-  position: relative !important;
+.app-shell__container {
+  height: 100vh;
+  width: 100%;
 }
 
-mat-sidenav-container {
-  width: 100% !important;
-  position: relative !important;
+.app-shell__sidenav {
+  width: clamp(240px, 50vw, 360px);
+  background-color: #1976d2;
+  color: #fff;
+  padding: 1rem 0.75rem;
+}
+
+.app-shell__content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #fff;
+}
+
+.app-shell__main {
+  flex: 1;
+  padding: 1.5rem;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .app-shell__main {
+    padding: 1rem;
+  }
 }
 
 /* Overlapping toolbar icons: control stacking order and prevent pointer interference */
 .icon-close,
 .icon-menu {
-	pointer-events: none;
+  pointer-events: none;
 }
 
 .icon-close {
-	z-index: 2;
+  z-index: 2;
 }
 
 .icon-menu {
-	z-index: 1;
+  z-index: 1;
 }
 

@@ -1,22 +1,26 @@
-<section>
-  <form fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="center center" #f="ngForm" (ngSubmit)="onSubmit(f)"
-    autocomplete="on">
+<section class="auth-section">
+  <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()" autocomplete="on">
     <mat-form-field>
       <mat-label>Email</mat-label>
-      <input #emailInput ngModel name="email" type="email" matInput placeholder="Email" email required
-        autocomplete="email">
+      <input formControlName="email" type="email" matInput placeholder="Email" autocomplete="email">
+      @if (emailControl.invalid && (emailControl.dirty || emailControl.touched)) {
       <mat-error>Please enter a valid email.</mat-error>
+      }
     </mat-form-field>
     <mat-form-field hintLabel="Should be at least 6 characters">
       <mat-label>Password</mat-label>
-      <input #passwordInput ngModel name="password" type="password" matInput placeholder="Password" required
-        #pwd="ngModel" minlength="6" autocomplete="current-password">
-      <mat-hint align="end">{{pwd.value?.length }} / 6</mat-hint>
+      <input formControlName="password" type="password" matInput placeholder="Password" autocomplete="current-password">
+      <mat-hint align="end">{{ passwordControl.value.length }} / 6</mat-hint>
+      @if (passwordControl.invalid && (passwordControl.dirty || passwordControl.touched)) {
+      <mat-error>Password must be at least 6 characters.</mat-error>
+      }
     </mat-form-field>
-    @if (isLoading()) {
-    <mat-spinner></mat-spinner>
-    } @else {
-    <button type="submit" mat-raised-button color="primary" [disabled]="f.invalid">Submit</button>
-    }
+    <div class="auth-action">
+      @if (isLoading()) {
+      <mat-spinner></mat-spinner>
+      } @else {
+      <button type="submit" mat-raised-button color="primary" [disabled]="loginForm.invalid">Submit</button>
+      }
+    </div>
   </form>
 </section>

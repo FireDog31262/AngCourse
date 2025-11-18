@@ -1,91 +1,54 @@
-import { computed, inject, Injectable, signal } from "@angular/core";
+import { computed, inject, Injectable } from "@angular/core";
 import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "@angular/fire/auth";
 import { AuthData } from "./auth-data.model";
 import { User } from "./user.model";
 import { Router } from "@angular/router";
 import { doc, Firestore, setDoc, getDoc } from '@angular/fire/firestore';
-import { UiService } from "../../shared/ui.service";
+import { Store } from "@ngrx/store";
+import * as fromRoot from '../../app.reducer';
+import * as UI from '../../shared/ui.actions';
+// import * as fromAuth from './auth.reducers';
+import * as AuthActions from './auth.actions';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly userSignal = signal<User | null>(null);
-  readonly user = this.userSignal.asReadonly();
-  readonly isLoggedIn = computed(() => this.userSignal() !== null);
-
   private readonly router = inject(Router);
   private readonly auth = inject(Auth);
   private readonly firestore = inject(Firestore);
-  private readonly uiService = inject(UiService);
+  private readonly store = inject(Store<fromRoot.State>);
+  private readonly userSignal = this.store.selectSignal(fromRoot.getUser);
+  private readonly authStatusSignal = this.store.selectSignal(fromRoot.getIsAuthenticated);
+
+  readonly isLoggedIn = computed(() => this.authStatusSignal());
 
   login(authData: AuthData) {
-    this.uiService.setLoading(true);
-    try {
-      signInWithEmailAndPassword(this.auth, authData.email, authData.password)
-        .then(async result => {
+    this.store.dispatch(new UI.StartLoading());
+    signInWithEmailAndPassword(this.auth, authData.email, authData.password)
+      .then(async result => {
 
-          // Fetch user profile from Firestore
-          const userDocRef = doc(this.firestore, "users", result.user.uid);
-          const userDocSnap = await getDoc(userDocRef);
+        // Fetch user profile from Firestore
+        const userDocRef = doc(this.firestore, "users", result.user.uid);
+        const userDocSnap = await getDoc(userDocRef);
 
-          if (userDocSnap.exists()) {
-            const userData = userDocSnap.data();
-
-            // Convert Firestore Timestamp to Date
-            let birthdayDate = new Date();
-            if (userData['birthdate']) {
-              // Check if it's a Firestore Timestamp object
-              if (userData['birthdate'].toDate) {
-                birthdayDate = userData['birthdate'].toDate();
-              } else {
-                // Fallback for other date formats
-                birthdayDate = new Date(userData['birthdate']);
-              }
-            }
-
-            this.userSignal.set({
-              id: result.user.uid,
-              email: result.user.email || '',
-              name: userData['name'] || '',
-              birthday: birthdayDate
-            });
-          } else {
-            // Fallback if no Firestore document exists
-            this.userSignal.set({
-              id: result.user.uid,
-              email: result.user.email || '',
-              name: result.user.displayName || '',
-              birthday: new Date()
-            });
-          }
-          this.uiService.setLoading(false);
-          this.router.navigate(['/training']);
-        })
-        .catch(error => {
-          this.uiService.setLoading(false);
-          this.uiService.showSnackbar("Login failed: " + error.message, 'Close', 5000);
-            // alert(`Login failed: ${error.message}`);
-          });
-    } catch (error: any) {
-      this.uiService.setLoading(false);
-      this.uiService.showSnackbar("Login failed: " + error.message, 'Close', 5000);
-      console.error('❌ Login exception:', error);
-      // alert('Login failed. Please check your connection and try again.');
-    }
+        const authedUser = this.buildUserFromAuth(result.user.uid, result.user.email, result.user.displayName, userDocSnap.exists() ? userDocSnap.data() : null);
+        this.handleAuthSuccess(authedUser);
+      })
+      .catch(error => this.handleAuthFailure('Login', error));
   }
 
   logout() {
-    signOut(this.auth)
-      .then(() => {
-        console.log('✅ Firebase logout successful');
-        this.userSignal.set(null);
-        this.router.navigate(['/']);
-      })
-      .catch(error => {
-        console.error('❌ Logout error:', error);
-        // If Firebase logout fails (not configured), just clear local state
-        this.userSignal.set(null);
-        this.router.navigate(['/']);
-      });
+    // Navigate first, then clear state to avoid flashing UI
+    this.router.navigate(['/']).then(() => {
+      signOut(this.auth)
+        .then(() => {
+          console.log('✅ Firebase logout successful');
+          this.store.dispatch(new AuthActions.SetUnauthenticated());
+        })
+        .catch(error => {
+          console.error('❌ Logout error:', error);
+          this.store.dispatch(new AuthActions.SetUnauthenticated());
+        });
+    });
   }
 
   getUser() {
@@ -93,8 +56,8 @@ export class AuthService {
     return currentUser ? { ...currentUser } : null;
   }
 
-  async registerUser(userData: User & { password: string }) {
-    this.uiService.setLoading(true);
+  async registerUser(userData: Omit<User, 'id'> & { password: string }) {
+    this.store.dispatch(new UI.StartLoading());
     try {
       // Step 1: Register user with Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(this.auth, userData.email, userData.password);
@@ -112,20 +75,64 @@ export class AuthService {
 
       // Set the document ID to be the same as the user's UID
       await setDoc(doc(this.firestore, "users", uid), userProfileData);
-      this.uiService.setLoading(false);
+
+      const newUser = this.buildUserFromAuth(uid, userData.email, userData.name, userProfileData);
+      this.handleAuthSuccess(newUser);
       console.log("Successfully registered user and created profile for UID:", uid);
-      // You can now navigate the user to your main app screen
-      this.router.navigate(['/login']);
-    } catch (error: any) {
-      this.uiService.setLoading(false);
-      this.uiService.showSnackbar("Registration failed: " + error.message, 'Close', 5000);
-      console.error("Error during user registration or profile creation:", error.message);
-      // Handle specific errors (e.g., auth/email-already-in-use, auth/weak-password)
-      // You might want to display a user-friendly error message
+    } catch (error) {
+      this.handleAuthFailure('Registration', error);
     }
+  }
+
+  private buildUserFromAuth(uid: string, email: string | null, displayName: string | null, firestoreData: Record<string, unknown> | null): User {
+    const nameFromProfile = firestoreData?.['name'] ?? displayName ?? '';
+    const birthdate = firestoreData?.['birthdate'];
+
+    let birthdayDate = new Date();
+    if (birthdate) {
+      // Firestore Timestamp has toDate method, fallback handles strings/dates
+      if (typeof birthdate === 'object' && 'toDate' in birthdate && typeof birthdate['toDate'] === 'function') {
+        birthdayDate = birthdate['toDate']();
+      } else {
+        birthdayDate = new Date(birthdate as string | number | Date);
+      }
+    }
+
+    return {
+      id: uid,
+      email: email ?? '',
+      name: String(nameFromProfile ?? ''),
+      birthday: birthdayDate
+    };
+  }
+
+  private handleAuthSuccess(user: User) {
+    this.store.dispatch(new UI.StopLoading());
+    this.store.dispatch(new AuthActions.SetAuthenticated({ user }));
+    this.router.navigate(['/training']);
+  }
+
+  private handleAuthFailure(context: string, error: unknown) {
+    this.store.dispatch(new UI.StopLoading());
+    this.store.dispatch(new AuthActions.SetUnauthenticated());
+    const msg = this.extractMessage(error);
+    this.showErrorSnackbar(`${context} failed: ${msg}`);
+    console.error(`❌ ${context} exception:`, msg);
   }
 
   isAuthenticated() {
     return this.isLoggedIn();
+  }
+
+  private showErrorSnackbar(message: string) {
+    this.store.dispatch(new UI.ShowSnackbar({
+      message,
+      action: 'Close',
+      duration: 5000
+    }));
+  }
+
+  private extractMessage(error: unknown) {
+    return error instanceof Error ? error.message : String(error ?? 'Unknown error');
   }
 }

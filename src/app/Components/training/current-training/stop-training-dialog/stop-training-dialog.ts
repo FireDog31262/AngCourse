@@ -4,7 +4,6 @@ import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-stop-training-dialog',
-  standalone: true,
   imports: [MatButtonModule, MatDialogModule],
   templateUrl: './stop-training-dialog.html',
   styleUrl: './stop-training-dialog.less',

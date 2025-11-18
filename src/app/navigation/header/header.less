@@ -1,4 +1,65 @@
-a, a[routerLink] {
+:host {
+	display: block;
+}
+
+.header-toolbar {
+	width: 100%;
+	display: flex;
+	align-items: center;
+}
+
+.header__brand,
+.header__links {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+
+.header__spacer {
+	flex: 1 1 auto;
+}
+
+.header__link,
+.header__logo,
+a,
+a[routerLink] {
 	color: #fff !important;
-  text-decoration: none;
+	text-decoration: none;
+}
+
+.header__link {
+	font-weight: 500;
+}
+
+.header__mobile-toggle {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-left: auto;
+}
+
+.menu-toggle {
+	position: relative;
+	width: 40px;
+	height: 40px;
+}
+
+.menu-toggle .icon-close,
+.menu-toggle .icon-menu {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+@media (max-width: 599px) {
+	.header__desktop-only {
+		display: none;
+	}
+}
+
+@media (min-width: 600px) {
+	.header__mobile-toggle {
+		display: none;
+	}
 }
