@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
+import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection, isDevMode } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
@@ -10,6 +10,7 @@ import { reducers } from './app.reducer';
 import { provideEffects } from '@ngrx/effects';
 import { UiEffects } from './shared/ui.effects';
 import { TrainingEffects } from './Components/training/training.effects';
+import { provideServiceWorker } from '@angular/service-worker';
 
 export const firebaseConfig = {
   apiKey: "AIzaSyD97S1Gm8DjdBrc_mrmknk0KXvdrqSO42M",
@@ -30,6 +31,12 @@ export const appConfig: ApplicationConfig = {
     provideFirestore(() => getFirestore()),
     provideAuth(() => getAuth()),
     provideStore(reducers),
-    provideEffects(UiEffects, TrainingEffects)
+    provideEffects(UiEffects, TrainingEffects), provideServiceWorker('ngsw-worker.js', {
+            enabled: !isDevMode(),
+            registrationStrategy: 'registerWhenStable:30000'
+          }), provideServiceWorker('ngsw-worker.js', {
+            enabled: !isDevMode(),
+            registrationStrategy: 'registerWhenStable:30000'
+          })
   ]
 };
