@@ -1,0 +1,17 @@
+{
+    "hosting": {
+        "target": "fitness-app",
+        "public": "dist/FitnessTracker/browser",
+        "ignore": [
+            "firebase.json",
+            "**/.*",
+            "**/node_modules/**"
+        ],
+        "rewrites": [
+            {
+                "source": "**",
+                "destination": "/index.html"
+            }
+        ]
+    }
+}

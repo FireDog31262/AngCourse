@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "myangulartraining-dc6c0"
+  },
+  "targets": {
+    "myangulartraining-dc6c0": {
+      "hosting": {
+        "fitness-app": [
+          "fitnesstracker-dc6c0"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}
